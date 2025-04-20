@@ -1,0 +1,38 @@
+/*! purgecss start ignore */
+@import "slick-carousel/slick/slick.css";
+
+/*! purgecss end ignore*/
+
+/* Slideshow */
+.slick-dots li {
+    display: inline-block;
+}
+
+.slick-dots span {
+    background-color: var(--color-white);
+}
+
+.slick-dots .slick-active span {
+    background-color: var(--color-primary);
+    width: 3rem;
+}
+
+.slick-list {
+    margin: 0 -5px;
+}
+
+.slick-slide>div {
+    padding: 0 5px;
+}
+
+.slick-slide {
+    max-height: calc(100vh - 100px);
+}
+
+.slick-slide div {
+    max-height: calc(100vh - 100px);
+}
+
+.slick-slider ul {
+    display: flex !important;
+}
