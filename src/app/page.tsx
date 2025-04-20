@@ -16,8 +16,8 @@ export default function Home() {
         <div className="w-full space-y-5">
             <Header />
             <LatestCollection />
-            {/*<Categories />*/}
-            <BestSellers />
+            {/*<Categories />
+            <BestSellers />*/}
         </div>
     )
 }

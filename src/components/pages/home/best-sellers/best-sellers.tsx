@@ -22,8 +22,8 @@ export const BestSellers = () => {
     return (
         <div className="px-4">
             <div className="flex w-full items-center justify-between mb-4">
-                <h3 className="font-bold uppercase">BestSellers</h3>
-                <a className="text-sm uppercase underline cursor-pointer hover:no-underline">View All</a>
+                <h3 className="font-bold uppercase">Mais vendidos</h3>
+                {/*<a className="text-sm uppercase underline cursor-pointer hover:no-underline">View All</a>*/}
             </div>
 
             <div className="grid grid-cols-1 grid-rows-8 md:grid-cols-4 md:grid-rows-2 gap-0.5">
