@@ -1,20 +1,19 @@
 "use client"
 
-import { BestSellers } from "@/components/pages/home/best-sellers/best-sellers"
 import { Header } from "@/components/pages/home/header/header"
 import { LatestCollection } from "@/components/pages/home/latest-collection/latest-collection"
 import { useEffect, useState } from "react"
 
 export default function Home() {
-    const [loaded, setLoaded] = useState(false)
+    const [mobile, setMobile] = useState<boolean>()
 
     useEffect(() => {
-        if (document) setLoaded(true)
+        if (document) setMobile(window.matchMedia("(width < 48rem)").matches)
     }, [])
 
-    return loaded && (
+    return mobile !== undefined && (
         <div className="w-full space-y-5">
-            <Header />
+            <Header mobile={mobile} />
             <LatestCollection />
             {/*<Categories />
             <BestSellers />*/}

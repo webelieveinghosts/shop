@@ -14,7 +14,7 @@ export const Product = ({ newer, id, name, price, images }: { newer: boolean, id
                 </div>
             </div>}
 
-            <div className="flex items-center justify-center relative overflow-hidden rounded-md border-2 border-transparent transition-all duration-300 hover:border-primary hover:shadow-md" style={{ aspectRatio: "2/3" }}>
+            <div className="flex items-center justify-center relative overflow-hidden rounded-md border-2 border-transparent transition-all duration-300 hover:border-primary hover:shadow-md" style={{ aspectRatio: "1/1" }}>
                 <div className="relative max-w-full w-full h-full group">
                     <Slider
                         slidesToShow={1}
