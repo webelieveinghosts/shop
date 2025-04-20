@@ -48,28 +48,28 @@ export default function LookBook() {
                     <img src="/image/lookbook/12.JPG" decoding="async" width="3200" height="4000" />
                 </div>
                 <div>
-                    <img src="/image/lookbook/13.JPG" decoding="async" width="3200" height="4000" />
+                    <img src="/image/lookbook/13.jpg" decoding="async" width="3200" height="4000" />
                 </div>
                 <div>
-                    <img src="/image/lookbook/14.JPG" decoding="async" width="3200" height="4000" />
+                    <img src="/image/lookbook/14.jpg" decoding="async" width="3200" height="4000" />
                 </div>
             </div>
 
             <div className="flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
                 <div>
-                    <img src="/image/lookbook/15.JPG" decoding="async" width="3200" height="4000" />
+                    <img src="/image/lookbook/15.jpg" decoding="async" width="3200" height="4000" />
                 </div>
                 <div>
-                    <img src="/image/lookbook/16.JPG" decoding="async" width="3200" height="4000" />
+                    <img src="/image/lookbook/16.jpg" decoding="async" width="3200" height="4000" />
                 </div>
                 <div>
-                    <img src="/image/lookbook/17.JPG" decoding="async" width="3200" height="4000" />
+                    <img src="/image/lookbook/17.jpg" decoding="async" width="3200" height="4000" />
                 </div>
                 <div>
-                    <img src="/image/lookbook/18.JPG" decoding="async" width="3200" height="4000" />
+                    <img src="/image/lookbook/18.jpg" decoding="async" width="3200" height="4000" />
                 </div>
                 <div>
-                    <img src="/image/lookbook/19.JPG" decoding="async" width="3200" height="4000" />
+                    <img src="/image/lookbook/19.jpg" decoding="async" width="3200" height="4000" />
                 </div>
             </div>
         </main>
