@@ -4,7 +4,7 @@ import { Database } from "./database"
 import { CartItem } from "@/components/provider/cart-provider"
 
 export const getLatestCollection = cache(async (supabase: SupabaseClient<Database>) => {{
-    const { data } = await supabase.from("products").select("*").neq("stock", 0).order("created_at").limit(8)
+    const { data } = await supabase.from("products").select("*").neq("stock", 0).order("sales").limit(8)
     return data ?? []
 }})
 
