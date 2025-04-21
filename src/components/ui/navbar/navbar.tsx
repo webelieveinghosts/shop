@@ -5,9 +5,7 @@ export const Navbar = () => {
     return (
         <nav className="relative flex items-center justify-between p-4 lg:px-6">
             <div className="block flex-none md:hidden">
-                <button aria-label="Open mobile menu" className="flex h-11 w-11 items-center justify-center text-black transition-colors md:hidden">
-                    <Logo />
-                </button>
+                <Logo />
             </div>
 
             <div className="flex w-full items-center">
