@@ -12,7 +12,7 @@ import "@/styles/global.css"
 
 export const metadata: Metadata = {
     title: "WBG Store",
-    description: "web believeing ghosts",
+    description: "we believeing ghosts",
 }
 
 const inter = Inter({ subsets: ["latin"] })
