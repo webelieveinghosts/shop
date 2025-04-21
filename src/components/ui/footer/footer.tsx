@@ -7,8 +7,7 @@ export const Footer = () => {
                 <div className="md:flex md:justify-between pt-4 lg:pt-5 border-t border-zinc-300">
                     <div className="flex flex-col mb-6 md:mb-0 justify-between">
                         <a href="#" className="flex items-center">
-                            <Logo className="h-8 me-3" />
-                            <span className="self-center text-2xl font-semibold whitespace-nowrap">Store</span>
+                            <Logo className="h-8" />
                         </a>
 
                         <span className="text-sm text-gray-500 sm:text-center">© 2025 <a href="#" className="hover:underline">WBG Store</a>. All Rights Reserved.</span>

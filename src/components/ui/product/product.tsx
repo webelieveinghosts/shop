@@ -25,7 +25,7 @@ export const Product = ({ newer, id, name, price, images }: { newer: boolean, id
                         prevArrow={<div><button className="flex items-center justify-center w-7 h-7 bg-primary text-white opacity-0 transition-all duration-300 hover:bg-primary-hover group-hover:opacity-100 cursor-pointer"><ChevronLeft /></button></div>}
                         nextArrow={<div><button className="flex items-center justify-center w-7 h-7 bg-primary text-white opacity-0 transition-all duration-300 hover:bg-primary-hover group-hover:opacity-100 cursor-pointer"><ChevronRight /></button></div>}
                     >
-                        {images.map((value, index) => <img key={`${name}-${index}`} decoding="async" loading="lazy" src={`https://lhlpxtxqdlctohptywpi.supabase.co/storage/v1/object/public/products/${id}/${value}`} className="max-w-full object-cover w-full h-full pointer-events-none select-none" />)}
+                        {images.map((value, index) => <img key={`${name}-${index}`} decoding="async" loading="lazy" src={`https://lhlpxtxqdlctohptywpi.supabase.co/storage/v1/object/public/products/${id}/${value}?quality=50`} className="max-w-full object-cover w-full h-full pointer-events-none select-none" />)}
                     </Slider>
                 </div>
             </div>
