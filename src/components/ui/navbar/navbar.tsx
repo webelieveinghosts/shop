@@ -5,7 +5,9 @@ export const Navbar = () => {
     return (
         <nav className="relative flex items-center justify-between p-4 lg:px-6">
             <div className="block flex-none md:hidden">
-                <Logo />
+                <button className="flex h-11 w-11 items-center justify-center text-black transition-colors md:hidden">
+                    <Logo />
+                </button>
             </div>
 
             <div className="flex w-full items-center">
