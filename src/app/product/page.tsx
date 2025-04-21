@@ -38,7 +38,7 @@ export default async function ProductPage({ searchParams }: { searchParams: Prom
 
                     <div>
                         <h3 className="font-semibold uppercase">Descrição</h3>
-                        <div className="mt-2 text-sm text-slate-500 leading-relaxed" role="accordion">
+                        <div className="mt-2 text-sm text-slate-500 leading-relaxed whitespace-pre-wrap" role="accordion">
                             {product.description}
                         </div>
                     </div>
