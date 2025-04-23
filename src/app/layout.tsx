@@ -11,8 +11,8 @@ import { createClient } from "@/supabase/server"
 import "@/styles/global.css"
 
 export const metadata: Metadata = {
-    title: "WBG Store",
-    description: "we believeing ghosts",
+    title: "WBG",
+    description: "we believe in ghosts",
 }
 
 const inter = Inter({ subsets: ["latin"] })
