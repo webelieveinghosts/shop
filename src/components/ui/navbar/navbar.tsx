@@ -22,14 +22,14 @@ export const Navbar = () => {
                 </div>
 
                 <div className="flex w-full md:justify-center md:w-1/3">
-                    <a className="mr-2 flex items-center md:justify-center md:w-auto lg:mr-6" href="/">
-                        <Logo className="w-14" />
-                    </a>
-
-                    <div className="flex items-center justify-center w-full md:hidden md:w-0">
+                    <div className="flex items-center justify-center md:hidden md:w-0">
                         {pathname !== "/" && <a className="text-black/60 underline-offset-4 hover:text-black hover:underline transition-all duration-300" href="/">Início</a>}
                         {pathname === "/" && <a className="text-black/60 underline-offset-4 hover:text-black hover:underline transition-all duration-300" href="/lookbook">Lookbook</a>}
                     </div>
+                    
+                    <a className="flex items-center justify-center w-full md:w-auto lg:mr-6" href="/">
+                        <Logo className="w-14" />
+                    </a>
                 </div>
 
                 <div className="flex justify-end md:w-1/3">
