@@ -26,7 +26,7 @@ export const Navbar = () => {
                         <Logo className="w-14" />
                     </a>
 
-                    <div className="flex items-center justify-center w-full md:hidden">
+                    <div className="flex items-center justify-center w-full md:hidden md:w-0">
                         {pathname !== "/" && <a className="text-black/60 underline-offset-4 hover:text-black hover:underline transition-all duration-300" href="/">Início</a>}
                         {pathname === "/" && <a className="text-black/60 underline-offset-4 hover:text-black hover:underline transition-all duration-300" href="/lookbook">Lookbook</a>}
                     </div>
