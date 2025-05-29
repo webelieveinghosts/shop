@@ -38,7 +38,7 @@ const sliderSettings = {
     ]
 }
 
-export const Categories = () => {
+export const CategoriesList = () => {
     return (
         <div className="px-4">
             <div className="flex items-center justify-between -mt-2 pb-0.5 mb-3">

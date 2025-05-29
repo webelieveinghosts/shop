@@ -1,10 +1,18 @@
-import Slider from "react-slick"
+"use client"
+
+import { useEffect, useState } from "react"
 
 // Import css files
 import "@/styles/slick.css"
 
-export const Header = ({ mobile }: { mobile: boolean }) => {
-    return (
+export const Header = () => {
+    const [mobile, setMobile] = useState<boolean>()
+
+    useEffect(() => {
+        if (document) setMobile(window.matchMedia("(width < 48rem)").matches)
+    }, [])
+
+    return mobile !== undefined && (
         <section className="flex mx-auto max-w-screen-2xl px-4">
             <div className="md:col-span-4 md:row-span-2">
                 {mobile ?

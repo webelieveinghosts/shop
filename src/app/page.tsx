@@ -1,20 +1,18 @@
-"use client"
-
+import { Category } from "@/components/pages/home/categories/category"
 import { Header } from "@/components/pages/home/header/header"
 import { LatestCollection } from "@/components/pages/home/latest-collection/latest-collection"
-import { useEffect, useState } from "react"
+import { getCategories } from "@/supabase/queries"
+import { createClient } from "@/supabase/server"
 
-export default function Home() {
-    const [mobile, setMobile] = useState<boolean>()
+export default async function Home() {
+    const supabase = await createClient()
+    const categories = await getCategories(supabase)
 
-    useEffect(() => {
-        if (document) setMobile(window.matchMedia("(width < 48rem)").matches)
-    }, [])
-
-    return mobile !== undefined && (
+    return (
         <div className="w-full space-y-5">
-            <Header mobile={mobile} />
+            <Header />
             <LatestCollection />
+            {categories.map((value, index) => <Category key={`category-${index}`} category={value} />)}
             {/*<Categories />
             <BestSellers />*/}
         </div>

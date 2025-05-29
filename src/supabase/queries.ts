@@ -1,17 +1,17 @@
 import { cache } from "react"
 import { SupabaseClient } from "@supabase/supabase-js"
-import { Database } from "./database"
+import { Database, Tables } from "./database"
 import { CartItem } from "@/components/provider/cart-provider"
 
-export const getLatestCollection = cache(async (supabase: SupabaseClient<Database>) => {{
+export const getLatestCollection = cache(async (supabase: SupabaseClient<Database>) => {
     const { data } = await supabase.from("products").select("*").neq("stock", 0).order("sales").limit(8)
     return data ?? []
-}})
+})
 
-export const getBestSellers = cache(async (supabase: SupabaseClient<Database>) => {{
-    const { data } = await supabase.from("products").select("*").neq("stock", 0).order("sales").limit(8)
+export const getProductsByCategory = cache(async (supabase: SupabaseClient<Database>, category: number) => {
+    const { data } = await supabase.from("products").select("*").eq("category", category).neq("stock", 0).order("sales")
     return data ?? []
-}})
+})
 
 export const getCart = cache(async (supabase: SupabaseClient<Database>, cartId?: string): Promise<CartItem[]> => {
     if (!cartId) return []
@@ -30,4 +30,9 @@ export const getCart = cache(async (supabase: SupabaseClient<Database>, cartId?:
     }))
 
     return cart as CartItem[]
+})
+
+export const getCategories = cache(async (supabase: SupabaseClient<Database>): Promise<Tables<"categories">[]> => {
+    const { data } = await supabase.from("categories").select()
+    return data ?? []
 })
