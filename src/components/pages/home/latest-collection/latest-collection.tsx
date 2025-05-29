@@ -22,7 +22,7 @@ export const LatestCollection = () => {
     return (
         <div className="px-4">
             <div className="flex w-full items-center justify-between mb-4">
-                <h3 className="font-bold uppercase">NONVIOLENT COMMUNICATION</h3>
+                <h3 className="font-bold uppercase">LATEST COLLECTION</h3>
                 {/*<a className="text-sm uppercase underline cursor-pointer hover:no-underline">Ver Tudo</a>*/}
             </div>
 

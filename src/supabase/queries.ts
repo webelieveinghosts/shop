@@ -33,6 +33,6 @@ export const getCart = cache(async (supabase: SupabaseClient<Database>, cartId?:
 })
 
 export const getCategories = cache(async (supabase: SupabaseClient<Database>): Promise<Tables<"categories">[]> => {
-    const { data } = await supabase.from("categories").select()
+    const { data } = await supabase.from("categories").select().order("created_at", { ascending: false })
     return data ?? []
 })
