@@ -6,6 +6,11 @@ export const Timer = () => {
     const [timer, setTimer] = useState(1809556140000 - Date.now())
 
     useEffect(() => {
+        if (timer <= 0) {
+            window.location.reload()
+            return () => {}
+        }
+
         const interval = setInterval(() => setTimer(1809556140000 - Date.now()), 1000)
         return () => {
             clearInterval(interval)
