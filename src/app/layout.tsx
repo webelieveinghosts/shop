@@ -9,7 +9,6 @@ import { getCart } from "@/supabase/queries"
 import { createClient } from "@/supabase/server"
 
 import "@/styles/global.css"
-import { Timer } from "@/components/pages/home/timer/timer"
 
 export const metadata: Metadata = {
     title: "WBG",
@@ -26,15 +25,12 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     return (
         <html lang="en">
             <body className={`w-full h-screen ${inter.className} antialiased`}>
-                {Date.now() >= 1809556140000 ? 
-                <>
-                    <CartProvider data={cart}>
-                        <Navbar />
-                        {children}
-                    </CartProvider>
+                <CartProvider data={cart}>
+                    <Navbar />
+                    {children}
+                </CartProvider>
 
-                    <Footer />
-                </> : <Timer />}
+                <Footer />
             </body>
         </html>
     )
