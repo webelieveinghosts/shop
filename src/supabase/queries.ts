@@ -9,7 +9,7 @@ export const getLatestCollection = cache(async (supabase: SupabaseClient<Databas
 })
 
 export const getProductsByCategory = cache(async (supabase: SupabaseClient<Database>, category: number) => {
-    const { data } = await supabase.from("products").select("*").eq("category", category).neq("stock", 0).order("sales")
+    const { data } = await supabase.from("products").select("*").eq("category", category).neq("stock", 0).order("sales", { ascending: false })
     return data ?? []
 })
 
