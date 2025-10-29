@@ -6,6 +6,7 @@ import { Navbar } from "@/components/ui/navbar/navbar"
 import { Footer } from "@/components/ui/footer/footer"
 import { CartProvider } from "@/components/provider/cart-provider"
 import { PasswordGate } from "@/components/auth/password-gate"
+import { GoogleAnalytics } from "@/components/analytics/google-analytics"
 import { getCart } from "@/supabase/queries"
 import { createClient } from "@/supabase/server"
 
@@ -25,6 +26,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 
     return (
         <html lang="en">
+            <head>
+                <GoogleAnalytics />
+            </head>
             <body className={`w-full h-screen ${inter.className} antialiased`}>
                 <PasswordGate>
                     <CartProvider data={cart}>
