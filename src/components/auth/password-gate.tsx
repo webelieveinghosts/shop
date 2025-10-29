@@ -47,7 +47,7 @@ export function PasswordGate({ children }: { children: React.ReactNode }) {
                 <div className="w-full max-w-md px-6">
                     <div className="text-center mb-8">
                         <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
-                            WBG SHOP
+                            WBG
                         </h1>
                         <p className="text-gray-400 text-lg">
                             we believe in ghosts
