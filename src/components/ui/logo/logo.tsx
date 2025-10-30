@@ -5,8 +5,8 @@ export const Logo = ({ className }: { className?: string }) => {
         <Image 
             src="/logo.png" 
             alt="WBG Logo" 
-            width={150} 
-            height={80} 
+            width={5307} 
+            height={5307} 
             className={className}
             priority
         />
