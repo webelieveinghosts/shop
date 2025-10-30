@@ -24,9 +24,6 @@ export default function LookBook() {
                     <img src="/image/lookbook/5.webp" decoding="async" width="3200" height="4000" />
                 </div>
                 <div>
-                    <img src="/image/lookbook/6.webp" decoding="async" width="3200" height="4000" />
-                </div>
-                <div>
                     <img src="/image/lookbook/7.webp" decoding="async" width="3200" height="4000" />
                 </div>
                 <div>
