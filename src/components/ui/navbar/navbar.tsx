@@ -4,7 +4,7 @@ import { Logo } from "@/components/ui/logo/logo"
 import { usePathname } from "next/navigation"
 import { Fragment, useState } from "react"
 import { Dialog, Transition } from "@headlessui/react"
-import { MenuIcon, XIcon, ShoppingCartIcon } from "lucide-react"
+import { MenuIcon, XIcon } from "lucide-react"
 import { CartModal } from "../cart/cart-modal"
 
 export const Navbar = () => {
@@ -16,12 +16,12 @@ export const Navbar = () => {
         { name: "Lookbook", href: "/lookbook" },
         { name: "Loja", href: "/loja" },
         { name: "Vídeos", href: "/videos" },
-        { name: "Carrinho", href: "/carrinho" },
+        { name: "Carrinho" },
     ]
 
     return (
         <nav className="flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200 relative z-50">
-            {/* Logo à esquerda */}
+            {/* Logo */}
             <a href="/" className="flex items-center">
                 <Logo className="w-36" />
             </a>
@@ -29,14 +29,18 @@ export const Navbar = () => {
             {/* Links desktop */}
             <ul className="hidden md:flex gap-8 uppercase text-sm">
                 {links.map((link) => (
-                    <li key={link.href}>
-                        <a
-                            href={link.href}
-                            className={`text-black/70 transition-all duration-300 hover:text-black hover:underline ${pathname === link.href ? "underline text-black" : ""
-                                }`}
-                        >
-                            {link.name}
-                        </a>
+                    <li key={link.name}>
+                        {link.name === "Carrinho" ? (
+                            <CartModal />
+                        ) : (
+                            <a
+                                href={link.href}
+                                className={`text-black/70 transition-all duration-300 hover:text-black hover:underline ${pathname === link.href ? "underline text-black" : ""
+                                    }`}
+                            >
+                                {link.name}
+                            </a>
+                        )}
                     </li>
                 ))}
             </ul>
@@ -50,7 +54,11 @@ export const Navbar = () => {
 
             {/* Mobile menu */}
             <Transition show={mobileOpen} as={Fragment}>
-                <Dialog as="div" className="fixed inset-0 z-50 md:hidden" onClose={setMobileOpen}>
+                <Dialog
+                    as="div"
+                    className="fixed inset-0 z-50 md:hidden"
+                    onClose={setMobileOpen}
+                >
                     <Transition.Child
                         as={Fragment}
                         enter="transition-opacity ease-linear duration-300"
@@ -75,19 +83,24 @@ export const Navbar = () => {
                         <Dialog.Panel className="fixed inset-y-0 left-0 w-64 bg-white p-6 flex flex-col">
                             <div className="flex items-center justify-between mb-6">
                                 <Logo className="w-32" />
-                                <button onClick={() => setMobileOpen(false)} aria-label="Fechar menu">
+                                <button
+                                    onClick={() => setMobileOpen(false)}
+                                    aria-label="Fechar menu"
+                                >
                                     <XIcon className="w-6 h-6 text-black" />
                                 </button>
                             </div>
                             <ul className="flex flex-col gap-4 uppercase text-black">
                                 {links.map((link) => (
-                                    <li key={link.href}>
+                                    <li key={link.name}>
                                         {link.name === "Carrinho" ? (
-                                            <CartModal /> // abre o modal no mobile
+                                            <CartModal />
                                         ) : (
                                             <a
                                                 href={link.href}
-                                                className={`block transition-all duration-300 hover:text-gray-800 ${pathname === link.href ? "font-semibold underline" : ""
+                                                className={`block transition-all duration-300 hover:text-gray-800 ${pathname === link.href
+                                                    ? "font-semibold underline"
+                                                    : ""
                                                     }`}
                                                 onClick={() => setMobileOpen(false)}
                                             >
