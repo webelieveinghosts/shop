@@ -110,7 +110,6 @@ export const Navbar = () => {
                                             </a>
                                         </li>
                                     ))}
-                                    {/* Carrinho no menu mobile */}
                                     <li>
                                         <CartModal>
                                             <span
