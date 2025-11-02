@@ -16,8 +16,9 @@ export const Navbar = () => {
         { name: "Lookbook", href: "/lookbook" },
         { name: "Loja", href: "/loja" },
         { name: "Vídeos", href: "/videos" },
-        { name: "Carrinho" },
     ]
+
+    const closeMobileMenu = () => setMobileOpen(false)
 
     return (
         <nav className="flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200 relative z-50">
@@ -30,35 +31,39 @@ export const Navbar = () => {
             <ul className="hidden md:flex gap-8 uppercase text-sm">
                 {links.map((link) => (
                     <li key={link.name}>
-                        {link.name === "Carrinho" ? (
-                            <CartModal />
-                        ) : (
-                            <a
-                                href={link.href}
-                                className={`text-black/70 transition-all duration-300 hover:text-black hover:underline ${pathname === link.href ? "underline text-black" : ""
-                                    }`}
-                            >
-                                {link.name}
-                            </a>
-                        )}
+                        <a
+                            href={link.href}
+                            className={`text-black/70 transition-all duration-300 hover:text-black hover:underline ${pathname === link.href ? "underline text-black" : ""
+                                }`}
+                        >
+                            {link.name}
+                        </a>
                     </li>
                 ))}
+                {/* Carrinho como link textual */}
+                <li>
+                    <CartModal>
+                        <span className="text-black/70 transition-all duration-300 hover:text-black hover:underline cursor-pointer">
+                            Carrinho
+                        </span>
+                    </CartModal>
+                </li>
             </ul>
 
             {/* Mobile menu button */}
             <div className="md:hidden flex items-center">
-                <button onClick={() => setMobileOpen(true)} aria-label="Abrir menu">
+                <button
+                    onClick={() => setMobileOpen(true)}
+                    aria-label="Abrir menu"
+                    className="p-1"
+                >
                     <MenuIcon className="w-6 h-6 text-black" />
                 </button>
             </div>
 
             {/* Mobile menu */}
             <Transition show={mobileOpen} as={Fragment}>
-                <Dialog
-                    as="div"
-                    className="fixed inset-0 z-50 md:hidden"
-                    onClose={setMobileOpen}
-                >
+                <Dialog as="div" className="relative z-50 md:hidden" onClose={setMobileOpen}>
                     <Transition.Child
                         as={Fragment}
                         enter="transition-opacity ease-linear duration-300"
@@ -71,47 +76,55 @@ export const Navbar = () => {
                         <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
                     </Transition.Child>
 
-                    <Transition.Child
-                        as={Fragment}
-                        enter="transition ease-in-out duration-300 transform"
-                        enterFrom="-translate-x-full"
-                        enterTo="translate-x-0"
-                        leave="transition ease-in-out duration-200 transform"
-                        leaveFrom="translate-x-0"
-                        leaveTo="-translate-x-full"
-                    >
-                        <Dialog.Panel className="fixed inset-y-0 left-0 w-64 bg-white p-6 flex flex-col">
-                            <div className="flex items-center justify-between mb-6">
-                                <Logo className="w-32" />
-                                <button
-                                    onClick={() => setMobileOpen(false)}
-                                    aria-label="Fechar menu"
-                                >
-                                    <XIcon className="w-6 h-6 text-black" />
-                                </button>
-                            </div>
-                            <ul className="flex flex-col gap-4 uppercase text-black">
-                                {links.map((link) => (
-                                    <li key={link.name}>
-                                        {link.name === "Carrinho" ? (
-                                            <CartModal />
-                                        ) : (
+                    <div className="fixed inset-0 overflow-hidden">
+                        <Transition.Child
+                            as={Fragment}
+                            enter="transition ease-in-out duration-300 transform"
+                            enterFrom="-translate-x-full"
+                            enterTo="translate-x-0"
+                            leave="transition ease-in-out duration-200 transform"
+                            leaveFrom="translate-x-0"
+                            leaveTo="-translate-x-full"
+                        >
+                            <Dialog.Panel className="fixed inset-y-0 left-0 w-64 bg-white p-6 flex flex-col">
+                                <div className="flex items-center justify-between mb-6">
+                                    <Logo className="w-32" />
+                                    <button
+                                        onClick={closeMobileMenu}
+                                        aria-label="Fechar menu"
+                                        className="p-1"
+                                    >
+                                        <XIcon className="w-6 h-6 text-black" />
+                                    </button>
+                                </div>
+                                <ul className="flex flex-col gap-4 uppercase text-black">
+                                    {links.map((link) => (
+                                        <li key={link.name}>
                                             <a
                                                 href={link.href}
-                                                className={`block transition-all duration-300 hover:text-gray-800 ${pathname === link.href
-                                                    ? "font-semibold underline"
-                                                    : ""
+                                                className={`block transition-all duration-300 hover:text-gray-800 ${pathname === link.href ? "font-semibold underline" : ""
                                                     }`}
-                                                onClick={() => setMobileOpen(false)}
+                                                onClick={closeMobileMenu}
                                             >
                                                 {link.name}
                                             </a>
-                                        )}
+                                        </li>
+                                    ))}
+                                    {/* Carrinho no menu mobile */}
+                                    <li>
+                                        <CartModal>
+                                            <span
+                                                className="block transition-all duration-300 hover:text-gray-800 cursor-pointer"
+                                                onClick={closeMobileMenu}
+                                            >
+                                                Carrinho
+                                            </span>
+                                        </CartModal>
                                     </li>
-                                ))}
-                            </ul>
-                        </Dialog.Panel>
-                    </Transition.Child>
+                                </ul>
+                            </Dialog.Panel>
+                        </Transition.Child>
+                    </div>
                 </Dialog>
             </Transition>
         </nav>
