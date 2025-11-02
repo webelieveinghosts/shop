@@ -35,7 +35,6 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
                         <Navbar />
                         {children}
                     </CartProvider>
-
                     <Footer />
                 </PasswordGate>
             </body>
