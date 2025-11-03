@@ -10,6 +10,7 @@ import { CartModal } from "../cart/cart-modal"
 export const Navbar = () => {
     const pathname = usePathname()
     const [mobileOpen, setMobileOpen] = useState(false)
+    const [cartOpen, setCartOpen] = useState(false)
 
     const links = [
         { name: "Início", href: "/home" },
@@ -19,6 +20,11 @@ export const Navbar = () => {
     ]
 
     const closeMobileMenu = () => setMobileOpen(false)
+
+    const handleCartClick = () => {
+        closeMobileMenu()
+        setCartOpen(true)
+    }
 
     return (
         <nav className="flex items-center justify-between px-6 py-2 bg-white border-b border-gray-200 relative z-50">
@@ -42,7 +48,7 @@ export const Navbar = () => {
                 ))}
                 {/* Carrinho como link textual */}
                 <li>
-                    <CartModal>
+                    <CartModal isOpen={cartOpen} onOpenChange={setCartOpen}>
                         <span className="text-black/70 transition-all duration-300 hover:text-black hover:underline cursor-pointer">
                             Carrinho
                         </span>
@@ -113,14 +119,7 @@ export const Navbar = () => {
                                     <li>
                                         <div
                                             className="block transition-all duration-300 hover:text-gray-800 cursor-pointer"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                closeMobileMenu();
-                                                const cartElement = document.querySelector('.hidden.md\\:flex [class*="CartModal"]');
-                                                if (cartElement) {
-                                                    cartElement.querySelector('span')?.click();
-                                                }
-                                            }}
+                                            onClick={handleCartClick}
                                         >
                                             Carrinho
                                         </div>
