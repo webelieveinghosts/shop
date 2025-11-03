@@ -12,9 +12,9 @@ export const Navbar = () => {
     const [mobileOpen, setMobileOpen] = useState(false)
 
     const links = [
-        { name: "Início", href: "/" },
+        { name: "Início", href: "/home" },
         { name: "Lookbook", href: "/lookbook" },
-        { name: "Loja", href: "/loja" },
+        { name: "Loja", href: "/shop" },
         { name: "Vídeos", href: "/videos" },
     ]
 
