@@ -21,14 +21,14 @@ export const Navbar = () => {
     const closeMobileMenu = () => setMobileOpen(false)
 
     return (
-        <nav className="flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200 relative z-50">
+        <nav className="flex items-center justify-between px-6 py-2 bg-white border-b border-gray-200 relative z-50">
             {/* Logo */}
             <a href="/" className="flex items-center">
-                <Logo className="w-36" />
+                <Logo className="w-32" />
             </a>
 
             {/* Links desktop */}
-            <ul className="hidden md:flex gap-8 uppercase text-sm">
+            <ul className="hidden md:flex gap-6 uppercase text-sm">
                 {links.map((link) => (
                     <li key={link.name}>
                         <a
@@ -57,7 +57,7 @@ export const Navbar = () => {
                     aria-label="Abrir menu"
                     className="p-1"
                 >
-                    <MenuIcon className="w-6 h-6 text-black" />
+                    <MenuIcon className="w-5 h-5 text-black" />
                 </button>
             </div>
 
@@ -86,18 +86,18 @@ export const Navbar = () => {
                             leaveFrom="translate-x-0"
                             leaveTo="-translate-x-full"
                         >
-                            <Dialog.Panel className="fixed inset-y-0 left-0 w-64 bg-white p-6 flex flex-col">
-                                <div className="flex items-center justify-between mb-6">
-                                    <Logo className="w-32" />
+                            <Dialog.Panel className="fixed inset-y-0 left-0 w-64 bg-white p-4 flex flex-col">
+                                <div className="flex items-center justify-between mb-4">
+                                    <Logo className="w-28" />
                                     <button
                                         onClick={closeMobileMenu}
                                         aria-label="Fechar menu"
                                         className="p-1"
                                     >
-                                        <XIcon className="w-6 h-6 text-black" />
+                                        <XIcon className="w-5 h-5 text-black" />
                                     </button>
                                 </div>
-                                <ul className="flex flex-col gap-4 uppercase text-black">
+                                <ul className="flex flex-col gap-3 uppercase text-sm text-black">
                                     {links.map((link) => (
                                         <li key={link.name}>
                                             <a
