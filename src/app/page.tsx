@@ -9,11 +9,13 @@ export default async function Home() {
 
     return (
         <div className="w-full space-y-5">
-            {/* <LatestCollection /> */}
-            <h1>teste</h1>
-            {/* {categories.map((value, index) => <Category key={`category-${index}`} category={value} />)} */}
-            {/*<Categories />
-            <BestSellers />*/}
+
         </div>
     )
 }
+
+// {/* <LatestCollection /> */}
+// <h1>teste</h1>
+// {/* {categories.map((value, index) => <Category key={`category-${index}`} category={value} />)} */}
+// {/*<Categories />
+// <BestSellers />*/}
