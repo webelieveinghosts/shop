@@ -239,8 +239,8 @@ export const LatestCollection = () => {
                         {/* Botão Acessar Loja */}
                         <div className="flex justify-center mt-12">
                             <a
-                                href="/loja"
-                                className="bg-black text-white px-4 py-2 rounded-2xl hover:bg-gray-800 transition"
+                                href="/shop"
+                                className="bg-black text-white px-12 py-2 rounded-2xl hover:bg-gray-800 transition"
                             >
                                 Acessar Loja Completa
                             </a>
