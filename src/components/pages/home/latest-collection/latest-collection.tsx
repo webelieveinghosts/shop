@@ -219,8 +219,8 @@ export const LatestCollection = () => {
                                     key={index}
                                     onClick={() => setCurrentIndex(index)}
                                     className={`w-2 h-2 rounded-full transition-all duration-300 ${currentIndex % products.length === index
-                                            ? 'bg-black w-4'
-                                            : 'bg-gray-300'
+                                        ? 'bg-black w-4'
+                                        : 'bg-gray-300'
                                         }`}
                                     aria-label={`Ir para produto ${index + 1}`}
                                 />
@@ -234,6 +234,7 @@ export const LatestCollection = () => {
                             >
                                 Acessar Loja Completa
                             </a>
+
                         </div>
                     </>
                 ) : (
