@@ -5,24 +5,67 @@ import { Product } from "@/components/ui/product/product"
 import { Database } from "@/supabase/database"
 import { createClient } from "@/supabase/client"
 import { getLatestCollection } from "@/supabase/queries"
-import { ChevronRightIcon, ChevronLeftIcon } from "lucide-react"
 
 export const LatestCollection = () => {
     const [products, setProducts] = useState<Database["public"]["Tables"]["products"]["Row"][]>([])
     const [isLoading, setIsLoading] = useState(true)
+    const [imagesLoaded, setImagesLoaded] = useState(false)
     const [currentIndex, setCurrentIndex] = useState(0)
     const scrollContainerRef = useRef<HTMLDivElement>(null)
     const autoScrollRef = useRef<NodeJS.Timeout | null>(null)
 
     const supabase = createClient()
 
+    // Função para pre-carregar todas as imagens
+    const preloadImages = async (imageUrls: string[]) => {
+        const promises = imageUrls.map((url) => {
+            return new Promise((resolve, reject) => {
+                const img = new Image()
+                img.src = url
+                img.onload = resolve
+                img.onerror = reject
+            })
+        })
+
+        try {
+            await Promise.all(promises)
+            setImagesLoaded(true)
+        } catch (error) {
+            console.error("Erro ao carregar imagens:", error)
+            // Mesmo com erro, continuamos para não travar a UI
+            setImagesLoaded(true)
+        }
+    }
+
     const load = async () => {
         try {
             setIsLoading(true)
+            setImagesLoaded(false)
             const products = await getLatestCollection(supabase)
             setProducts(products || [])
+
+            // Coletar todas as URLs de imagens dos produtos
+            const allImageUrls: string[] = []
+            products?.forEach(product => {
+                if (product.images && Array.isArray(product.images)) {
+                    product.images.forEach(image => {
+                        if (image && typeof image === 'string') {
+                            allImageUrls.push(image)
+                        }
+                    })
+                }
+            })
+
+            // Pre-carregar imagens
+            if (allImageUrls.length > 0) {
+                await preloadImages(allImageUrls)
+            } else {
+                setImagesLoaded(true)
+            }
+
         } catch (error) {
             console.error("Erro ao carregar a coleção:", error)
+            setImagesLoaded(true) // Garante que a UI não trave em caso de erro
         } finally {
             setIsLoading(false)
         }
@@ -34,12 +77,11 @@ export const LatestCollection = () => {
 
     // Efeito de scroll automático em loop infinito
     useEffect(() => {
-        if (!scrollContainerRef.current || products.length === 0) return
+        if (!scrollContainerRef.current || products.length === 0 || !imagesLoaded) return
 
         const scrollContainer = scrollContainerRef.current
         const itemWidth = 288 // w-72 = 288px
         const totalItems = products.length * 2 // Porque duplicamos os produtos
-        const totalWidth = itemWidth * totalItems
 
         const autoScroll = () => {
             setCurrentIndex(prev => {
@@ -69,11 +111,11 @@ export const LatestCollection = () => {
                 clearInterval(autoScrollRef.current)
             }
         }
-    }, [products.length])
+    }, [products.length, imagesLoaded]) // Adicionamos imagesLoaded como dependência
 
     // Efeito para atualizar o scroll quando currentIndex muda
     useEffect(() => {
-        if (scrollContainerRef.current && products.length > 0) {
+        if (scrollContainerRef.current && products.length > 0 && imagesLoaded) {
             const itemWidth = 288 // w-72 = 288px
             const scrollPosition = currentIndex * itemWidth
 
@@ -82,7 +124,7 @@ export const LatestCollection = () => {
                 behavior: 'smooth'
             })
         }
-    }, [currentIndex, products.length])
+    }, [currentIndex, products.length, imagesLoaded])
 
     const nextSlide = () => {
         if (autoScrollRef.current) {
@@ -187,7 +229,18 @@ export const LatestCollection = () => {
                     </div>
                 ) : products.length > 0 ? (
                     <>
-                        <div className="relative group w-full">
+                        {/* Loading adicional para imagens */}
+                        {!imagesLoaded && (
+                            <div className="flex justify-center items-center py-8">
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+                                <span className="ml-3 text-gray-600">Carregando imagens...</span>
+                            </div>
+                        )}
+
+                        <div
+                            className="relative group w-full"
+                            style={{ opacity: imagesLoaded ? 1 : 0.5, transition: 'opacity 0.3s' }}
+                        >
                             <div
                                 ref={scrollContainerRef}
                                 className="flex gap-6 md:gap-8 overflow-x-auto snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] w-full"
@@ -222,19 +275,21 @@ export const LatestCollection = () => {
                         </div>
 
                         {/* Indicadores de posição */}
-                        <div className="flex justify-center mt-6 space-x-2">
-                            {products.map((_, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => setCurrentIndex(index)}
-                                    className={`w-2 h-2 rounded-full transition-all duration-300 ${currentIndex % products.length === index
-                                        ? 'bg-black w-4'
-                                        : 'bg-gray-300'
-                                        }`}
-                                    aria-label={`Ir para produto ${index + 1}`}
-                                />
-                            ))}
-                        </div>
+                        {imagesLoaded && (
+                            <div className="flex justify-center mt-6 space-x-2">
+                                {products.map((_, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => setCurrentIndex(index)}
+                                        className={`w-2 h-2 rounded-full transition-all duration-300 ${currentIndex % products.length === index
+                                            ? 'bg-black w-4'
+                                            : 'bg-gray-300'
+                                            }`}
+                                        aria-label={`Ir para produto ${index + 1}`}
+                                    />
+                                ))}
+                            </div>
+                        )}
 
                         {/* Botão Acessar Loja */}
                         <div className="flex justify-center mt-12">
