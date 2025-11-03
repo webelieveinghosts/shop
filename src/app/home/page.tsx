@@ -10,7 +10,7 @@ export default async function Home() {
     return (
         <div className="w-full space-y-5">
             <LatestCollection />
-            {/* {categories.map((value, index) => <Category key={`category-${index}`} category={value} />)} */}
+            {categories.map((value, index) => <Category key={`category-${index}`} category={value} />)}
             {/*<Categories />
             <BestSellers />*/}
         </div>
