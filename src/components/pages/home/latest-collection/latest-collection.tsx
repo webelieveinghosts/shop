@@ -16,25 +16,27 @@ export const LatestCollection = () => {
 
     const supabase = createClient()
 
-    // Função para pre-carregar todas as imagens
-    const preloadImages = async (imageUrls: string[]): Promise<boolean> => {
-        if (imageUrls.length === 0) return true
+    // Função melhorada para pre-carregar imagens
+    const preloadImages = async (imageUrls: string[]): Promise<void> => {
+        if (imageUrls.length === 0) return
 
-        const promises = imageUrls.map((url) => {
+        const loadImage = (url: string): Promise<void> => {
             return new Promise((resolve, reject) => {
                 const img = new Image()
                 img.src = url
-                img.onload = () => resolve(url)
-                img.onerror = () => reject(url)
+                img.onload = () => resolve()
+                img.onerror = () => {
+                    console.warn(`Failed to load image: ${url}`)
+                    resolve() // Continua mesmo com erro
+                }
             })
-        })
+        }
 
-        try {
-            await Promise.all(promises)
-            return true
-        } catch (error) {
-            console.error("Algumas imagens falharam ao carregar:", error)
-            return true // Continua mesmo com erro
+        // Carrega imagens em batches para não sobrecarregar
+        const batchSize = 5
+        for (let i = 0; i < imageUrls.length; i += batchSize) {
+            const batch = imageUrls.slice(i, i + batchSize)
+            await Promise.all(batch.map(url => loadImage(url)))
         }
     }
 
@@ -43,34 +45,48 @@ export const LatestCollection = () => {
             setIsLoading(true)
             setImagesLoaded(false)
 
-            // 1. Primeiro carrega os produtos
+            console.log("🔄 Iniciando carregamento...")
+
+            // 1. Carrega os produtos
             const productsData = await getLatestCollection(supabase)
+            console.log("📦 Produtos carregados:", productsData?.length)
             setProducts(productsData || [])
 
             if (!productsData || productsData.length === 0) {
+                console.log("❌ Nenhum produto encontrado")
                 setImagesLoaded(true)
                 return
             }
 
-            // 2. Coletar TODAS as URLs de imagens
+            // 2. Coletar TODAS as URLs de imagens de TODOS os produtos
             const allImageUrls: string[] = []
-            productsData.forEach(product => {
+            productsData.forEach((product, index) => {
+                console.log(`📸 Produto ${index + 1}:`, product.name, "Imagens:", product.images)
+
                 if (product.images && Array.isArray(product.images)) {
-                    product.images.forEach(image => {
+                    product.images.forEach((image, imgIndex) => {
                         if (image && typeof image === 'string') {
                             allImageUrls.push(image)
+                            console.log(`   → Imagem ${imgIndex + 1}:`, image)
                         }
                     })
                 }
             })
 
-            // 3. Pre-carregar TODAS as imagens antes de continuar
-            await preloadImages(allImageUrls)
+            console.log("🖼️ Total de imagens para carregar:", allImageUrls.length)
+
+            if (allImageUrls.length > 0) {
+                // 3. Pre-carregar TODAS as imagens
+                console.log("⏳ Pre-carregando imagens...")
+                await preloadImages(allImageUrls)
+                console.log("✅ Todas as imagens pré-carregadas!")
+            }
 
         } catch (error) {
-            console.error("Erro ao carregar a coleção:", error)
+            console.error("❌ Erro ao carregar a coleção:", error)
         } finally {
-            // 4. SÓ DEPOIS que tudo carregou, mostra o conteúdo
+            // 4. Marcar como carregado
+            console.log("🎯 Carregamento finalizado!")
             setImagesLoaded(true)
             setIsLoading(false)
         }
@@ -80,27 +96,15 @@ export const LatestCollection = () => {
         loadData()
     }, [])
 
-    // Efeitos do carrossel - SÓ RODAM quando imagesLoaded = true
+    // Efeito do carrossel automático - APENAS quando tudo estiver pronto
     useEffect(() => {
         if (!scrollContainerRef.current || products.length === 0 || !imagesLoaded) return
 
+        console.log("🎠 Iniciando carrossel automático...")
+
         const autoScroll = () => {
             setCurrentIndex(prev => {
-                const totalItems = products.length * 2
-                const nextIndex = (prev + 1) % totalItems
-
-                if (nextIndex === products.length) {
-                    setTimeout(() => {
-                        if (scrollContainerRef.current) {
-                            scrollContainerRef.current.scrollTo({
-                                left: 0,
-                                behavior: 'instant'
-                            })
-                        }
-                    }, 50)
-                    return 0
-                }
-
+                const nextIndex = (prev + 1) % products.length
                 return nextIndex
             })
         }
@@ -114,9 +118,10 @@ export const LatestCollection = () => {
         }
     }, [products.length, imagesLoaded])
 
+    // Efeito para scroll suave
     useEffect(() => {
         if (scrollContainerRef.current && products.length > 0 && imagesLoaded) {
-            const itemWidth = 288
+            const itemWidth = 288 // w-72
             const scrollPosition = currentIndex * itemWidth
 
             scrollContainerRef.current.scrollTo({
@@ -126,7 +131,36 @@ export const LatestCollection = () => {
         }
     }, [currentIndex, products.length, imagesLoaded])
 
-    // Skeleton loading - MOSTRA ATÉ IMAGENS ESTAREM PRONTAS
+    // Controles manuais
+    const nextSlide = () => {
+        if (autoScrollRef.current) {
+            clearInterval(autoScrollRef.current)
+        }
+        setCurrentIndex(prev => (prev + 1) % products.length)
+
+        // Reinicia auto-scroll
+        setTimeout(() => {
+            autoScrollRef.current = setInterval(() => {
+                setCurrentIndex(prev => (prev + 1) % products.length)
+            }, 3000)
+        }, 100)
+    }
+
+    const prevSlide = () => {
+        if (autoScrollRef.current) {
+            clearInterval(autoScrollRef.current)
+        }
+        setCurrentIndex(prev => prev === 0 ? products.length - 1 : prev - 1)
+
+        // Reinicia auto-scroll
+        setTimeout(() => {
+            autoScrollRef.current = setInterval(() => {
+                setCurrentIndex(prev => (prev + 1) % products.length)
+            }, 3000)
+        }, 100)
+    }
+
+    // Skeleton loading
     const ProductSkeleton = () => (
         <div className="animate-pulse flex-shrink-0 w-72">
             <div className="bg-gray-200 aspect-[3/4] rounded-lg mb-2"></div>
@@ -135,7 +169,7 @@ export const LatestCollection = () => {
         </div>
     )
 
-    // Loading principal - mostra enquanto carrega TUDO
+    // Loading principal
     if (isLoading || !imagesLoaded) {
         return (
             <section className="w-full py-12 bg-white">
@@ -151,22 +185,23 @@ export const LatestCollection = () => {
                     </div>
 
                     <div className="flex gap-6 md:gap-8 overflow-hidden justify-center">
-                        {Array.from({ length: 4 }).map((_, index) => (
+                        {Array.from({ length: Math.min(4, products.length || 4) }).map((_, index) => (
                             <ProductSkeleton key={`skeleton-${index}`} />
                         ))}
                     </div>
 
-                    {/* Loading spinner adicional */}
                     <div className="flex justify-center items-center mt-8">
                         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-black"></div>
-                        <span className="ml-3 text-gray-600">Carregando produtos...</span>
+                        <span className="ml-3 text-gray-600">
+                            {!imagesLoaded ? "Carregando imagens..." : "Carregando produtos..."}
+                        </span>
                     </div>
                 </div>
             </section>
         )
     }
 
-    // Conteúdo principal - SÓ RENDERIZA quando tudo estiver carregado
+    // Conteúdo principal - SÓ quando tudo estiver carregado
     return (
         <section className="w-full py-12 bg-white">
             <div className="w-full">
@@ -182,25 +217,39 @@ export const LatestCollection = () => {
 
                 {products.length > 0 ? (
                     <>
-                        <div className="relative group w-full">
+                        <div className="relative group">
+                            {/* Botões de navegação */}
+                            <button
+                                onClick={prevSlide}
+                                className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full p-2 shadow-lg transition-all opacity-0 group-hover:opacity-100"
+                                aria-label="Produto anterior"
+                            >
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </button>
+
+                            <button
+                                onClick={nextSlide}
+                                className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full p-2 shadow-lg transition-all opacity-0 group-hover:opacity-100"
+                                aria-label="Próximo produto"
+                            >
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                            </button>
+
+                            {/* Container do carrossel - SEM DUPLICAÇÃO */}
                             <div
                                 ref={scrollContainerRef}
-                                className="flex gap-6 md:gap-8 overflow-x-auto snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] w-full"
+                                className="flex gap-6 md:gap-8 overflow-x-auto snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] w-full px-4"
                                 style={{ scrollBehavior: 'smooth' }}
                             >
-                                {products.map(product => (
-                                    <div key={`product-${product.id}`} className="flex-shrink-0 w-72 snap-start">
-                                        <Product
-                                            newer={true}
-                                            id={product.id}
-                                            name={product.name}
-                                            price={product.price}
-                                            images={product.images}
-                                        />
-                                    </div>
-                                ))}
-                                {products.map(product => (
-                                    <div key={`product-duplicate-${product.id}`} className="flex-shrink-0 w-72 snap-start">
+                                {products.map((product, index) => (
+                                    <div
+                                        key={`product-${product.id}-${index}`}
+                                        className="flex-shrink-0 w-72 snap-start"
+                                    >
                                         <Product
                                             newer={true}
                                             id={product.id}
@@ -213,14 +262,15 @@ export const LatestCollection = () => {
                             </div>
                         </div>
 
+                        {/* Indicadores */}
                         <div className="flex justify-center mt-6 space-x-2">
                             {products.map((_, index) => (
                                 <button
                                     key={index}
                                     onClick={() => setCurrentIndex(index)}
-                                    className={`w-2 h-2 rounded-full transition-all duration-300 ${currentIndex % products.length === index
-                                        ? 'bg-black w-4'
-                                        : 'bg-gray-300'
+                                    className={`w-2 h-2 rounded-full transition-all duration-300 ${currentIndex === index
+                                            ? 'bg-black w-4'
+                                            : 'bg-gray-300 hover:bg-gray-400'
                                         }`}
                                     aria-label={`Ir para produto ${index + 1}`}
                                 />
@@ -230,11 +280,10 @@ export const LatestCollection = () => {
                         <div className="flex justify-center mt-12">
                             <a
                                 href="/shop"
-                                className="bg-black text-white px-12 py-2 rounded-2xl hover:bg-gray-800 transition"
+                                className="bg-black text-white px-12 py-3 rounded-2xl hover:bg-gray-800 transition-all duration-300 font-medium"
                             >
                                 Acessar Loja Completa
                             </a>
-
                         </div>
                     </>
                 ) : (
