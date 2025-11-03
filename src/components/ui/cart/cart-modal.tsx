@@ -1,4 +1,3 @@
-// cart-modal.tsx
 "use client";
 
 import { Dialog, Transition } from "@headlessui/react";
@@ -18,15 +17,22 @@ const formatter = new Intl.NumberFormat(undefined, {
 });
 
 interface CartModalProps {
-    children: ReactNode; // trigger do modal
+    children: ReactNode;
+    isOpen?: boolean;
+    onOpenChange?: (open: boolean) => void;
 }
 
-export const CartModal = ({ children }: CartModalProps) => {
+export const CartModal = ({ children, isOpen: externalIsOpen, onOpenChange }: CartModalProps) => {
     const cart = useCart();
     const totalPrice = cart.items.reduce((sum, { price }) => sum + price, 0);
 
-    const [isOpen, setIsOpen] = useState(false);
+    const [internalIsOpen, setInternalIsOpen] = useState(false);
     const quantityRef = useRef(cart.items.reduce((a, { quantity }) => a + quantity, 0));
+
+    // Use o estado externo se fornecido, caso contrário use o interno
+    const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
+    const setIsOpen = onOpenChange || setInternalIsOpen;
+
     const openCart = () => setIsOpen(true);
     const closeCart = () => setIsOpen(false);
 
@@ -36,12 +42,12 @@ export const CartModal = ({ children }: CartModalProps) => {
             setIsOpen(true);
             quantityRef.current = totalQuantity;
         }
-    }, [isOpen, cart.items]);
+    }, [isOpen, cart.items, setIsOpen]);
 
     return (
         <>
             <div onClick={openCart} className="cursor-pointer inline-block">
-                {children} {/* aqui vai aparecer "Carrinho" */}
+                {children}
             </div>
 
             <Transition show={isOpen} as={Fragment}>
