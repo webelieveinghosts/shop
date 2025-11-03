@@ -21,12 +21,9 @@ export default async function ProductPage({ searchParams }: { searchParams: Prom
 
     return (
         <div className="flex w-full pt-6 px-4">
-            <div className="flex flex-col md:flex-row items-start gap-8 max-lg:gap-12 max-sm:gap-8">
-                <div className="w-full lg:w-3/5 lg:sticky top-0">
-                    <ProductGallery id={id} images={product.images} />
-                </div>
-
-                <div className="w-full lg:w-2/5 overflow-hidden">
+            <div className="flex flex-col lg:flex-row items-start gap-8 w-full">
+                {/* Informações do produto e botão */}
+                <div className="w-full lg:w-2/5 order-2 lg:order-1">
                     <div>
                         <h3 className="font-semibold uppercase">{product.name}</h3>
                         <h4 className="text-slate-500 mt-2 font-semibold">{formatter.format(product.price)}</h4>
@@ -47,6 +44,11 @@ export default async function ProductPage({ searchParams }: { searchParams: Prom
                         <hr className="my-6 border-slate-300" />
                         <img src={product.sizes_view} />
                     </div>}
+                </div>
+
+                {/* Gallery - agora vem depois no mobile */}
+                <div className="w-full lg:w-3/5 order-1 lg:order-2">
+                    <ProductGallery id={id} images={product.images} />
                 </div>
             </div>
         </div>
