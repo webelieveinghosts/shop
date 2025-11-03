@@ -12,6 +12,7 @@ export const LatestCollection = () => {
     const [isLoading, setIsLoading] = useState(true)
     const [currentIndex, setCurrentIndex] = useState(0)
     const scrollContainerRef = useRef<HTMLDivElement>(null)
+    const autoScrollRef = useRef<NodeJS.Timeout | null>(null)
 
     const supabase = createClient()
 
@@ -31,89 +32,127 @@ export const LatestCollection = () => {
         load()
     }, [])
 
-    // Efeito de scroll automático em loop
+    // Efeito de scroll automático em loop infinito
     useEffect(() => {
         if (!scrollContainerRef.current || products.length === 0) return
 
         const scrollContainer = scrollContainerRef.current
-        const scrollWidth = scrollContainer.scrollWidth
-        const clientWidth = scrollContainer.clientWidth
-        const maxScrollLeft = scrollWidth - clientWidth
+        const itemWidth = 288 // w-72 = 288px
+        const totalItems = products.length * 2 // Porque duplicamos os produtos
+        const totalWidth = itemWidth * totalItems
 
-        const autoScroll = setInterval(() => {
+        const autoScroll = () => {
             setCurrentIndex(prev => {
-                const nextIndex = prev + 1
-                if (nextIndex * 300 >= maxScrollLeft) {
-                    // Volta ao início suavemente
-                    setTimeout(() => {
-                        if (scrollContainerRef.current) {
-                            scrollContainerRef.current.scrollTo({ left: 0, behavior: 'instant' })
-                        }
-                    }, 50)
-                    return 0
-                }
-                return nextIndex
-            })
-        }, 3000) // Muda a cada 3 segundos
+                const nextIndex = (prev + 1) % totalItems
 
-        return () => clearInterval(autoScroll)
-    }, [products.length])
-
-    // Efeito para atualizar o scroll quando currentIndex muda
-    useEffect(() => {
-        if (scrollContainerRef.current) {
-            scrollContainerRef.current.scrollTo({
-                left: currentIndex * 300,
-                behavior: 'smooth'
-            })
-        }
-    }, [currentIndex])
-
-    const nextSlide = () => {
-        if (scrollContainerRef.current) {
-            const scrollContainer = scrollContainerRef.current
-            const scrollWidth = scrollContainer.scrollWidth
-            const clientWidth = scrollContainer.clientWidth
-            const maxScrollLeft = scrollWidth - clientWidth
-
-            setCurrentIndex(prev => {
-                const nextIndex = prev + 1
-                if (nextIndex * 300 >= maxScrollLeft) {
-                    setTimeout(() => {
-                        if (scrollContainerRef.current) {
-                            scrollContainerRef.current.scrollTo({ left: 0, behavior: 'instant' })
-                        }
-                    }, 50)
-                    return 0
-                }
-                return nextIndex
-            })
-        }
-    }
-
-    const prevSlide = () => {
-        if (scrollContainerRef.current) {
-            const scrollContainer = scrollContainerRef.current
-            const scrollWidth = scrollContainer.scrollWidth
-            const clientWidth = scrollContainer.clientWidth
-            const maxScrollLeft = scrollWidth - clientWidth
-
-            setCurrentIndex(prev => {
-                if (prev === 0) {
-                    // Vai para o final
+                // Se chegou no final da lista duplicada, volta suavemente para o início
+                if (nextIndex === products.length) {
                     setTimeout(() => {
                         if (scrollContainerRef.current) {
                             scrollContainerRef.current.scrollTo({
-                                left: maxScrollLeft,
+                                left: 0,
                                 behavior: 'instant'
                             })
                         }
                     }, 50)
-                    return Math.floor(maxScrollLeft / 300)
+                    return 0
                 }
-                return prev - 1
+
+                return nextIndex
             })
         }
+
+        autoScrollRef.current = setInterval(autoScroll, 3000)
+
+        return () => {
+            if (autoScrollRef.current) {
+                clearInterval(autoScrollRef.current)
+            }
+        }
+    }, [products.length])
+
+    // Efeito para atualizar o scroll quando currentIndex muda
+    useEffect(() => {
+        if (scrollContainerRef.current && products.length > 0) {
+            const itemWidth = 288 // w-72 = 288px
+            const scrollPosition = currentIndex * itemWidth
+
+            scrollContainerRef.current.scrollTo({
+                left: scrollPosition,
+                behavior: 'smooth'
+            })
+        }
+    }, [currentIndex, products.length])
+
+    const nextSlide = () => {
+        if (autoScrollRef.current) {
+            clearInterval(autoScrollRef.current)
+        }
+
+        setCurrentIndex(prev => {
+            const totalItems = products.length * 2
+            const nextIndex = (prev + 1) % totalItems
+
+            if (nextIndex === products.length) {
+                setTimeout(() => {
+                    if (scrollContainerRef.current) {
+                        scrollContainerRef.current.scrollTo({
+                            left: 0,
+                            behavior: 'instant'
+                        })
+                    }
+                }, 50)
+                return 0
+            }
+
+            return nextIndex
+        })
+
+        // Reinicia o auto scroll após interação manual
+        setTimeout(() => {
+            if (autoScrollRef.current) {
+                clearInterval(autoScrollRef.current)
+            }
+            autoScrollRef.current = setInterval(() => {
+                setCurrentIndex(prev => (prev + 1) % (products.length * 2))
+            }, 3000)
+        }, 100)
+    }
+
+    const prevSlide = () => {
+        if (autoScrollRef.current) {
+            clearInterval(autoScrollRef.current)
+        }
+
+        setCurrentIndex(prev => {
+            const totalItems = products.length * 2
+            const prevIndex = prev === 0 ? totalItems - 1 : prev - 1
+
+            if (prevIndex === totalItems - 1) {
+                setTimeout(() => {
+                    if (scrollContainerRef.current) {
+                        const totalWidth = 288 * totalItems
+                        scrollContainerRef.current.scrollTo({
+                            left: totalWidth,
+                            behavior: 'instant'
+                        })
+                    }
+                }, 50)
+                return totalItems - 1
+            }
+
+            return prevIndex
+        })
+
+        // Reinicia o auto scroll após interação manual
+        setTimeout(() => {
+            if (autoScrollRef.current) {
+                clearInterval(autoScrollRef.current)
+            }
+            autoScrollRef.current = setInterval(() => {
+                setCurrentIndex(prev => (prev + 1) % (products.length * 2))
+            }, 3000)
+        }, 100)
     }
 
     // Skeleton loading
@@ -126,8 +165,8 @@ export const LatestCollection = () => {
     )
 
     return (
-        <section className="px-4 py-12 bg-white">
-            <div className="max-w-7xl mx-auto">
+        <section className="w-full py-12 bg-white">
+            <div className="w-full">
                 {/* Header centralizado */}
                 <div className="flex flex-col items-center justify-center mb-12">
                     <div className="w-20 h-0.5 bg-gray-300 mb-4"></div>
@@ -148,7 +187,7 @@ export const LatestCollection = () => {
                     </div>
                 ) : products.length > 0 ? (
                     <>
-                        <div className="relative group">
+                        <div className="relative group w-full">
                             {/* Botões de navegação */}
                             <button
                                 onClick={prevSlide}
@@ -166,12 +205,13 @@ export const LatestCollection = () => {
                                 <ChevronRightIcon className="w-5 h-5" />
                             </button>
 
-                            {/* Carrossel de produtos */}
+                            {/* Carrossel de produtos - Largura total da tela */}
                             <div
                                 ref={scrollContainerRef}
-                                className="flex gap-6 md:gap-8 overflow-x-auto scrollbar-hide snap-x snap-mandatory"
+                                className="flex gap-6 md:gap-8 overflow-x-auto snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] w-full"
                                 style={{ scrollBehavior: 'smooth' }}
                             >
+                                {/* Primeira cópia dos produtos */}
                                 {products.map(product => (
                                     <div key={`product-${product.id}`} className="flex-shrink-0 w-72 snap-start">
                                         <Product
@@ -184,7 +224,7 @@ export const LatestCollection = () => {
                                     </div>
                                 ))}
 
-                                {/* Duplicar os produtos para efeito de loop contínuo */}
+                                {/* Segunda cópia dos produtos para loop infinito */}
                                 {products.map(product => (
                                     <div key={`product-duplicate-${product.id}`} className="flex-shrink-0 w-72 snap-start">
                                         <Product
@@ -201,13 +241,13 @@ export const LatestCollection = () => {
 
                         {/* Indicadores de posição */}
                         <div className="flex justify-center mt-6 space-x-2">
-                            {products.slice(0, Math.min(products.length, 5)).map((_, index) => (
+                            {products.map((_, index) => (
                                 <button
                                     key={index}
                                     onClick={() => setCurrentIndex(index)}
                                     className={`w-2 h-2 rounded-full transition-all duration-300 ${currentIndex % products.length === index
-                                            ? 'bg-black w-4'
-                                            : 'bg-gray-300'
+                                        ? 'bg-black w-4'
+                                        : 'bg-gray-300'
                                         }`}
                                     aria-label={`Ir para produto ${index + 1}`}
                                 />
