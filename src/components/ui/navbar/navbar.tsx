@@ -111,14 +111,19 @@ export const Navbar = () => {
                                         </li>
                                     ))}
                                     <li>
-                                        <CartModal>
-                                            <span
-                                                className="block transition-all duration-300 hover:text-gray-800 cursor-pointer"
-                                                onClick={closeMobileMenu}
-                                            >
-                                                Carrinho
-                                            </span>
-                                        </CartModal>
+                                        <div
+                                            className="block transition-all duration-300 hover:text-gray-800 cursor-pointer"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                closeMobileMenu();
+                                                const cartElement = document.querySelector('.hidden.md\\:flex [class*="CartModal"]');
+                                                if (cartElement) {
+                                                    cartElement.querySelector('span')?.click();
+                                                }
+                                            }}
+                                        >
+                                            Carrinho
+                                        </div>
                                     </li>
                                 </ul>
                             </Dialog.Panel>
