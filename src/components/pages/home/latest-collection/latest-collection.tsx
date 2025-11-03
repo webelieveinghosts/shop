@@ -17,36 +17,44 @@ export const LatestCollection = () => {
     const supabase = createClient()
 
     // Função para pre-carregar todas as imagens
-    const preloadImages = async (imageUrls: string[]) => {
+    const preloadImages = async (imageUrls: string[]): Promise<boolean> => {
+        if (imageUrls.length === 0) return true
+
         const promises = imageUrls.map((url) => {
             return new Promise((resolve, reject) => {
                 const img = new Image()
                 img.src = url
-                img.onload = resolve
-                img.onerror = reject
+                img.onload = () => resolve(url)
+                img.onerror = () => reject(url)
             })
         })
 
         try {
             await Promise.all(promises)
-            setImagesLoaded(true)
+            return true
         } catch (error) {
-            console.error("Erro ao carregar imagens:", error)
-            // Mesmo com erro, continuamos para não travar a UI
-            setImagesLoaded(true)
+            console.error("Algumas imagens falharam ao carregar:", error)
+            return true // Continua mesmo com erro
         }
     }
 
-    const load = async () => {
+    const loadData = async () => {
         try {
             setIsLoading(true)
             setImagesLoaded(false)
-            const products = await getLatestCollection(supabase)
-            setProducts(products || [])
 
-            // Coletar todas as URLs de imagens dos produtos
+            // 1. Primeiro carrega os produtos
+            const productsData = await getLatestCollection(supabase)
+            setProducts(productsData || [])
+
+            if (!productsData || productsData.length === 0) {
+                setImagesLoaded(true)
+                return
+            }
+
+            // 2. Coletar TODAS as URLs de imagens
             const allImageUrls: string[] = []
-            products?.forEach(product => {
+            productsData.forEach(product => {
                 if (product.images && Array.isArray(product.images)) {
                     product.images.forEach(image => {
                         if (image && typeof image === 'string') {
@@ -56,38 +64,31 @@ export const LatestCollection = () => {
                 }
             })
 
-            // Pre-carregar imagens
-            if (allImageUrls.length > 0) {
-                await preloadImages(allImageUrls)
-            } else {
-                setImagesLoaded(true)
-            }
+            // 3. Pre-carregar TODAS as imagens antes de continuar
+            await preloadImages(allImageUrls)
 
         } catch (error) {
             console.error("Erro ao carregar a coleção:", error)
-            setImagesLoaded(true) // Garante que a UI não trave em caso de erro
         } finally {
+            // 4. SÓ DEPOIS que tudo carregou, mostra o conteúdo
+            setImagesLoaded(true)
             setIsLoading(false)
         }
     }
 
     useEffect(() => {
-        load()
+        loadData()
     }, [])
 
-    // Efeito de scroll automático em loop infinito
+    // Efeitos do carrossel - SÓ RODAM quando imagesLoaded = true
     useEffect(() => {
         if (!scrollContainerRef.current || products.length === 0 || !imagesLoaded) return
 
-        const scrollContainer = scrollContainerRef.current
-        const itemWidth = 288 // w-72 = 288px
-        const totalItems = products.length * 2 // Porque duplicamos os produtos
-
         const autoScroll = () => {
             setCurrentIndex(prev => {
+                const totalItems = products.length * 2
                 const nextIndex = (prev + 1) % totalItems
 
-                // Se chegou no final da lista duplicada, volta suavemente para o início
                 if (nextIndex === products.length) {
                     setTimeout(() => {
                         if (scrollContainerRef.current) {
@@ -111,12 +112,11 @@ export const LatestCollection = () => {
                 clearInterval(autoScrollRef.current)
             }
         }
-    }, [products.length, imagesLoaded]) // Adicionamos imagesLoaded como dependência
+    }, [products.length, imagesLoaded])
 
-    // Efeito para atualizar o scroll quando currentIndex muda
     useEffect(() => {
         if (scrollContainerRef.current && products.length > 0 && imagesLoaded) {
-            const itemWidth = 288 // w-72 = 288px
+            const itemWidth = 288
             const scrollPosition = currentIndex * itemWidth
 
             scrollContainerRef.current.scrollTo({
@@ -126,78 +126,7 @@ export const LatestCollection = () => {
         }
     }, [currentIndex, products.length, imagesLoaded])
 
-    const nextSlide = () => {
-        if (autoScrollRef.current) {
-            clearInterval(autoScrollRef.current)
-        }
-
-        setCurrentIndex(prev => {
-            const totalItems = products.length * 2
-            const nextIndex = (prev + 1) % totalItems
-
-            if (nextIndex === products.length) {
-                setTimeout(() => {
-                    if (scrollContainerRef.current) {
-                        scrollContainerRef.current.scrollTo({
-                            left: 0,
-                            behavior: 'instant'
-                        })
-                    }
-                }, 50)
-                return 0
-            }
-
-            return nextIndex
-        })
-
-        // Reinicia o auto scroll após interação manual
-        setTimeout(() => {
-            if (autoScrollRef.current) {
-                clearInterval(autoScrollRef.current)
-            }
-            autoScrollRef.current = setInterval(() => {
-                setCurrentIndex(prev => (prev + 1) % (products.length * 2))
-            }, 3000)
-        }, 100)
-    }
-
-    const prevSlide = () => {
-        if (autoScrollRef.current) {
-            clearInterval(autoScrollRef.current)
-        }
-
-        setCurrentIndex(prev => {
-            const totalItems = products.length * 2
-            const prevIndex = prev === 0 ? totalItems - 1 : prev - 1
-
-            if (prevIndex === totalItems - 1) {
-                setTimeout(() => {
-                    if (scrollContainerRef.current) {
-                        const totalWidth = 288 * totalItems
-                        scrollContainerRef.current.scrollTo({
-                            left: totalWidth,
-                            behavior: 'instant'
-                        })
-                    }
-                }, 50)
-                return totalItems - 1
-            }
-
-            return prevIndex
-        })
-
-        // Reinicia o auto scroll após interação manual
-        setTimeout(() => {
-            if (autoScrollRef.current) {
-                clearInterval(autoScrollRef.current)
-            }
-            autoScrollRef.current = setInterval(() => {
-                setCurrentIndex(prev => (prev + 1) % (products.length * 2))
-            }, 3000)
-        }, 100)
-    }
-
-    // Skeleton loading
+    // Skeleton loading - MOSTRA ATÉ IMAGENS ESTAREM PRONTAS
     const ProductSkeleton = () => (
         <div className="animate-pulse flex-shrink-0 w-72">
             <div className="bg-gray-200 aspect-[3/4] rounded-lg mb-2"></div>
@@ -206,10 +135,41 @@ export const LatestCollection = () => {
         </div>
     )
 
+    // Loading principal - mostra enquanto carrega TUDO
+    if (isLoading || !imagesLoaded) {
+        return (
+            <section className="w-full py-12 bg-white">
+                <div className="w-full">
+                    <div className="flex flex-col items-center justify-center mb-12">
+                        <div className="w-20 h-0.5 bg-gray-300 mb-4"></div>
+                        <h3 className="font-bold uppercase text-2xl md:text-3xl tracking-wider text-center">
+                            LATEST COLLECTION
+                        </h3>
+                        <p className="text-gray-600 mt-3 text-center max-w-2xl">
+                            Descubra as peças mais recentes da nossa coleção exclusiva
+                        </p>
+                    </div>
+
+                    <div className="flex gap-6 md:gap-8 overflow-hidden justify-center">
+                        {Array.from({ length: 4 }).map((_, index) => (
+                            <ProductSkeleton key={`skeleton-${index}`} />
+                        ))}
+                    </div>
+
+                    {/* Loading spinner adicional */}
+                    <div className="flex justify-center items-center mt-8">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-black"></div>
+                        <span className="ml-3 text-gray-600">Carregando produtos...</span>
+                    </div>
+                </div>
+            </section>
+        )
+    }
+
+    // Conteúdo principal - SÓ RENDERIZA quando tudo estiver carregado
     return (
         <section className="w-full py-12 bg-white">
             <div className="w-full">
-                {/* Header centralizado */}
                 <div className="flex flex-col items-center justify-center mb-12">
                     <div className="w-20 h-0.5 bg-gray-300 mb-4"></div>
                     <h3 className="font-bold uppercase text-2xl md:text-3xl tracking-wider text-center">
@@ -220,33 +180,14 @@ export const LatestCollection = () => {
                     </p>
                 </div>
 
-                {/* Container do carrossel */}
-                {isLoading ? (
-                    <div className="flex gap-6 md:gap-8 overflow-hidden">
-                        {Array.from({ length: 4 }).map((_, index) => (
-                            <ProductSkeleton key={`skeleton-${index}`} />
-                        ))}
-                    </div>
-                ) : products.length > 0 ? (
+                {products.length > 0 ? (
                     <>
-                        {/* Loading adicional para imagens */}
-                        {!imagesLoaded && (
-                            <div className="flex justify-center items-center py-8">
-                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
-                                <span className="ml-3 text-gray-600">Carregando imagens...</span>
-                            </div>
-                        )}
-
-                        <div
-                            className="relative group w-full"
-                            style={{ opacity: imagesLoaded ? 1 : 0.5, transition: 'opacity 0.3s' }}
-                        >
+                        <div className="relative group w-full">
                             <div
                                 ref={scrollContainerRef}
                                 className="flex gap-6 md:gap-8 overflow-x-auto snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] w-full"
                                 style={{ scrollBehavior: 'smooth' }}
                             >
-                                {/* Primeira cópia dos produtos */}
                                 {products.map(product => (
                                     <div key={`product-${product.id}`} className="flex-shrink-0 w-72 snap-start">
                                         <Product
@@ -258,8 +199,6 @@ export const LatestCollection = () => {
                                         />
                                     </div>
                                 ))}
-
-                                {/* Segunda cópia dos produtos para loop infinito */}
                                 {products.map(product => (
                                     <div key={`product-duplicate-${product.id}`} className="flex-shrink-0 w-72 snap-start">
                                         <Product
@@ -274,24 +213,20 @@ export const LatestCollection = () => {
                             </div>
                         </div>
 
-                        {/* Indicadores de posição */}
-                        {imagesLoaded && (
-                            <div className="flex justify-center mt-6 space-x-2">
-                                {products.map((_, index) => (
-                                    <button
-                                        key={index}
-                                        onClick={() => setCurrentIndex(index)}
-                                        className={`w-2 h-2 rounded-full transition-all duration-300 ${currentIndex % products.length === index
-                                            ? 'bg-black w-4'
-                                            : 'bg-gray-300'
-                                            }`}
-                                        aria-label={`Ir para produto ${index + 1}`}
-                                    />
-                                ))}
-                            </div>
-                        )}
+                        <div className="flex justify-center mt-6 space-x-2">
+                            {products.map((_, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => setCurrentIndex(index)}
+                                    className={`w-2 h-2 rounded-full transition-all duration-300 ${currentIndex % products.length === index
+                                        ? 'bg-black w-4'
+                                        : 'bg-gray-300'
+                                        }`}
+                                    aria-label={`Ir para produto ${index + 1}`}
+                                />
+                            ))}
+                        </div>
 
-                        {/* Botão Acessar Loja */}
                         <div className="flex justify-center mt-12">
                             <a
                                 href="/shop"
@@ -299,8 +234,8 @@ export const LatestCollection = () => {
                             >
                                 Acessar Loja Completa
                             </a>
-                        </div>
 
+                        </div>
                     </>
                 ) : (
                     <div className="text-center py-12">
