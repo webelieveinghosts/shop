@@ -188,24 +188,6 @@ export const LatestCollection = () => {
                 ) : products.length > 0 ? (
                     <>
                         <div className="relative group w-full">
-                            {/* Botões de navegação */}
-                            <button
-                                onClick={prevSlide}
-                                className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-black p-3 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110"
-                                aria-label="Produto anterior"
-                            >
-                                <ChevronLeftIcon className="w-5 h-5" />
-                            </button>
-
-                            <button
-                                onClick={nextSlide}
-                                className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-black p-3 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110"
-                                aria-label="Próximo produto"
-                            >
-                                <ChevronRightIcon className="w-5 h-5" />
-                            </button>
-
-                            {/* Carrossel de produtos - Largura total da tela */}
                             <div
                                 ref={scrollContainerRef}
                                 className="flex gap-6 md:gap-8 overflow-x-auto snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] w-full"
