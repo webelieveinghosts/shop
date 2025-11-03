@@ -258,13 +258,12 @@ export const LatestCollection = () => {
                         <div className="flex justify-center mt-12">
                             <a
                                 href="/loja"
-                                className="group relative inline-flex items-center justify-center px-8 py-4 bg-black text-white font-medium uppercase tracking-wider transition-all duration-300 hover:bg-gray-800 hover:scale-105 active:scale-95"
+                                className="bg-black text-white px-4 py-2 rounded-2xl hover:bg-gray-800 transition"
                             >
-                                <span className="relative z-10">Acessar Loja Completa</span>
-                                <ChevronRightIcon className="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
-                                <div className="absolute inset-0 border-2 border-black transition-all duration-300 group-hover:translate-x-1 group-hover:translate-y-1"></div>
+                                Acessar Loja Completa
                             </a>
                         </div>
+
                     </>
                 ) : (
                     <div className="text-center py-12">
