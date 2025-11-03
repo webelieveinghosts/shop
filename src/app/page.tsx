@@ -1,6 +1,5 @@
 "use client"
-
-import { Logo } from "../logo/logo"
+import { Logo } from "../components/ui/logo/logo"
 
 export default function Main() {
     return (
@@ -37,6 +36,7 @@ export default function Main() {
                                     {item.label}
                                 </span>
 
+                                {/* Borda sutil no hover */}
                                 <div className="absolute inset-0 border-2 border-transparent group-hover:border-white/30 transition-all duration-500"></div>
                             </a>
                         ))}
@@ -44,6 +44,7 @@ export default function Main() {
                 </section>
             </div>
 
+            {/* Efeitos decorativos sutis - sem animação customizada */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-20 left-10 w-1 h-1 bg-gray-400 rounded-full opacity-40 animate-pulse"></div>
                 <div className="absolute top-40 right-20 w-1.5 h-1.5 bg-gray-500 rounded-full opacity-30 animate-pulse delay-1000"></div>
