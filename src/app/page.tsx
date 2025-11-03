@@ -1,22 +1,30 @@
+import { Logo } from "../components/ui/logo/logo"
+
 export default async function Main() {
     return (
-        <main className="min-h-screen w-full flex flex-col items-center justify-center bg-black text-white px-6">
-            <section className="max-w-3xl text-center space-y-6">
-                <h1 className="text-5xl md:text-6xl font-bold tracking-tight">
-                    We Believe in Ghosts
-                </h1>
+        <main className="min-h-screen w-full flex flex-col items-center justify-center bg-white px-6">
+            <div className="flex-1 flex items-center justify-center mb-20">
+                <div className="flex items-center justify-center">
+                    <Logo className="h-32 md:h-40 w-auto" />
+                </div>
+            </div>
 
-                <p className="text-gray-400 text-lg md:text-xl">
-                    a new dimension of underground — bold, minimal and timeless.
-                </p>
-
-                <div className="flex justify-center pt-6">
-                    <a
-                        href="/home"
-                        className="px-6 py-3 bg-white text-black font-semibold rounded-xl transition-all duration-300 hover:scale-105 active:scale-95"
-                    >
-                        Enter Store
-                    </a>
+            <section className="w-full max-w-2xl mb-16">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                    {[
+                        { href: "/home", label: "HOME" },
+                        { href: "/shop", label: "SHOP" },
+                        { href: "/lookbook", label: "LOOKBOOK" },
+                        { href: "/videos", label: "VIDEOS" }
+                    ].map((item) => (
+                        <a
+                            key={item.href}
+                            href={item.href}
+                            className="group relative bg-white border border-black text-black font-medium py-4 px-4 rounded-lg transition-all duration-300 hover:bg-black hover:text-white text-center text-sm uppercase tracking-wider"
+                        >
+                            {item.label}
+                        </a>
+                    ))}
                 </div>
             </section>
         </main>
