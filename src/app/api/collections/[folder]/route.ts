@@ -10,7 +10,7 @@ export async function GET(
         const params = await context.params;
         const { folder } = params;
 
-        // Validação básica do folder name
+
         if (!folder || folder.includes('..') || folder.includes('/')) {
             return NextResponse.json(
                 { error: 'Invalid folder name' },
@@ -20,7 +20,7 @@ export async function GET(
 
         const lookbookPath = path.join(process.cwd(), 'public', 'image', 'lookbook', folder);
 
-        // Verifica se a pasta existe
+
         if (!fs.existsSync(lookbookPath)) {
             return NextResponse.json(
                 { error: 'Collection not found' },
@@ -28,17 +28,16 @@ export async function GET(
             );
         }
 
-        // Lê todos os arquivos da pasta
+
         const files = fs.readdirSync(lookbookPath);
 
-        // Filtra apenas arquivos de imagem
+
         const imageExtensions = ['.webp', '.jpg', '.jpeg', '.png', '.avif'];
         const imageFiles = files.filter(file => {
             const ext = path.extname(file).toLowerCase();
             return imageExtensions.includes(ext);
         });
 
-        // Remove a extensão dos nomes dos arquivos
         const imageNames = imageFiles.map(file => path.parse(file).name);
 
         return NextResponse.json({
