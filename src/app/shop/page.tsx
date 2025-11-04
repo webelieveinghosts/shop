@@ -2,7 +2,7 @@ import { Category } from "@/components/pages/home/categories/category"
 import { getCategories } from "@/supabase/queries"
 import { createClient } from "@/supabase/server"
 
-export default async function Home() {
+export default async function Shop() {
     const supabase = await createClient()
     const categories = await getCategories(supabase)
 
