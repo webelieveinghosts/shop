@@ -9,5 +9,9 @@ export const getAllVideos = async () => {
         return []
     }
 
+    console.log(data)
+    
     return data
+
+
 }
