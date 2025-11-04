@@ -26,7 +26,7 @@ export default function Main() {
                             <a
                                 key={item.href}
                                 href={item.href}
-                                className="group relative bg-gradient-to-br from-black to-gray-900 text-white px-6 py-4 transition-all duration-500 ease-out transform hover:scale-105 hover:translate-y-[-2px] shadow-2xl hover:shadow-3xl border border-gray-800 text-center font-semibold text-sm uppercase tracking-widest min-w-[120px] overflow-hidden"
+                                className="group relative bg-gradient-to-br rounded-xl from-black to-gray-900 text-white px-6 py-4 transition-all duration-500 ease-out transform hover:scale-105 hover:translate-y-[-2px] shadow-2xl hover:shadow-3xl border border-gray-800 text-center font-semibold text-sm uppercase tracking-widest min-w-[120px] overflow-hidden"
                             >
                                 {/* Efeito de brilho */}
                                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
