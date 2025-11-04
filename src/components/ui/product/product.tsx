@@ -27,13 +27,14 @@ export const Product = ({ newer, id, name, price, images }: { newer: boolean, id
             )}
 
             <div
-                className="flex items-center justify-center relative overflow-hidden rounded-md border-2 border-transparent transition-all duration-300 hover:border-primary hover:shadow-md"
+                className={`flex items-center justify-center relative overflow-hidden rounded-md border-2 border-transparent transition-all duration-300 hover:border-primary hover:shadow-md ${hovered ? "scale-[1.03]" : "scale-100"
+                    }`}
                 style={{ aspectRatio: "1/1" }}
             >
                 {/* imagem principal */}
                 <img
                     src={firstImage}
-                    className={`absolute inset-0 object-cover w-full h-full transition-opacity duration-500 ease-in-out ${hasSecondImage && hovered ? "opacity-0" : "opacity-100"
+                    className={`absolute inset-0 object-cover w-full h-full transition-all duration-500 ease-in-out ${hasSecondImage && hovered ? "opacity-0 scale-105" : "opacity-100 scale-100"
                         }`}
                     alt={name}
                     decoding="async"
@@ -45,7 +46,7 @@ export const Product = ({ newer, id, name, price, images }: { newer: boolean, id
                 {hasSecondImage && (
                     <img
                         src={secondImage!}
-                        className={`absolute inset-0 object-cover w-full h-full transition-opacity duration-500 ease-in-out ${hovered ? "opacity-100" : "opacity-0"
+                        className={`absolute inset-0 object-cover w-full h-full transition-all duration-500 ease-in-out ${hovered ? "opacity-100 scale-105" : "opacity-0 scale-100"
                             }`}
                         alt={name}
                         decoding="async"

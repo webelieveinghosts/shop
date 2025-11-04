@@ -28,9 +28,7 @@ export async function GET(
             );
         }
 
-
         const files = fs.readdirSync(lookbookPath);
-
 
         const imageExtensions = ['.webp', '.jpg', '.jpeg', '.png', '.avif'];
         const imageFiles = files.filter(file => {
