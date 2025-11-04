@@ -1,46 +1,47 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
+import { useState } from 'react'
 
 interface Collection {
-    name: string;
-    displayName: string;
-    folderName: string;
-    cover: string;
+    name: string
+    displayName: string
+    folderName: string
+    cover: string
 }
 
 interface CollectionImages {
-    [folderName: string]: string[];
+    [folderName: string]: string[]
 }
 
 export default function LookBook() {
-    const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null);
-    const [collectionImages, setCollectionImages] = useState<CollectionImages>({});
-    const [loading, setLoading] = useState<string | null>(null);
+    const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null)
+    const [collectionImages, setCollectionImages] = useState<CollectionImages>({})
+    const [loading, setLoading] = useState<string | null>(null)
 
     const collections: Collection[] = [
         {
-            name: "MIDNIGHT RAVER$",
-            displayName: "MIDNIGHT RAVER$",
-            folderName: "midnight",
-            cover: "capa"
+            name: 'MIDNIGHT RAVER$',
+            displayName: 'MIDNIGHT RAVER$',
+            folderName: 'midnight',
+            cover: 'capa'
         }
-    ];
+    ]
 
     const SmartImage = ({
         collectionName,
         imageName,
         alt,
-        className = "",
+        className = '',
         priority = false
     }: {
-        collectionName: string;
-        imageName: string;
-        alt: string;
-        className?: string;
-        priority?: boolean;
+        collectionName: string
+        imageName: string
+        alt: string
+        className?: string
+        priority?: boolean
     }) => {
-        const extensions: string[] = ['webp', 'jpg', 'jpeg', 'png', 'avif'];
+        const extensions: string[] = ['webp', 'jpg', 'jpeg', 'png', 'avif']
+        const [visible, setVisible] = useState(false)
 
         return (
             <div className="w-full h-full">
@@ -56,78 +57,75 @@ export default function LookBook() {
                         src={`/image/lookbook/${collectionName}/${imageName}.webp`}
                         alt={alt}
                         className={`w-full h-full object-cover block ${className}`}
-                        loading={priority ? "eager" : "lazy"} // eager para carregamento imediato
+                        loading={priority ? 'eager' : 'lazy'}
                         decoding="async"
                         onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            const currentSrc = target.src;
-                            const url = new URL(currentSrc);
-                            const currentFilename = url.pathname.split('/').pop() || '';
-                            const currentExt = currentFilename.split('.').pop() || '';
-
-                            const currentIndex = extensions.indexOf(currentExt);
-                            console.log(`Extensão ${currentExt} falhou, tentando próxima...`);
-
+                            const target = e.target as HTMLImageElement
+                            const currentSrc = target.src
+                            const url = new URL(currentSrc)
+                            const currentFilename = url.pathname.split('/').pop() || ''
+                            const currentExt = currentFilename.split('.').pop() || ''
+                            const currentIndex = extensions.indexOf(currentExt)
+                            console.log(`Extensão ${currentExt} falhou, tentando próxima...`)
                             if (currentIndex < extensions.length - 1) {
-                                const nextExt = extensions[currentIndex + 1];
-                                const newSrc = `/image/lookbook/${collectionName}/${imageName}.${nextExt}`;
-                                target.src = newSrc;
-                                console.log('Tentando:', newSrc);
+                                const nextExt = extensions[currentIndex + 1]
+                                const newSrc = `/image/lookbook/${collectionName}/${imageName}.${nextExt}`
+                                target.src = newSrc
+                                console.log('Tentando:', newSrc)
                             } else {
-                                console.log('Todas as extensões falharam para:', imageName);
+                                console.log('Todas as extensões falharam para:', imageName)
                             }
                         }}
                         onLoad={(e) => {
-                            console.log('✅ Imagem carregada:', e.currentTarget.src);
-                            console.log('Dimensões:', e.currentTarget.naturalWidth, 'x', e.currentTarget.naturalHeight);
-                            // Força o display após carregar
-                            e.currentTarget.style.opacity = '1';
+                            console.log('✅ Imagem carregada:', e.currentTarget.src)
+                            console.log('Dimensões:', e.currentTarget.naturalWidth, 'x', e.currentTarget.naturalHeight)
+                            setVisible(true)
                         }}
-                        style={{ opacity: 0, transition: 'opacity 0.3s ease-in-out' }}
+                        style={{
+                            opacity: visible ? 1 : 0,
+                            transition: 'opacity 0.4s ease-in-out'
+                        }}
                     />
                 </picture>
             </div>
-        );
-    };
+        )
+    }
 
     const fetchCollectionImages = async (collection: Collection) => {
-        setLoading(collection.folderName);
+        setLoading(collection.folderName)
 
         try {
             if (collectionImages[collection.folderName]) {
-                setSelectedCollection(collection);
-                setLoading(null);
-                return;
+                setSelectedCollection(collection)
+                setLoading(null)
+                return
             }
 
-            const response = await fetch(`/api/collections/${collection.folderName}`);
+            const response = await fetch(`/api/collections/${collection.folderName}`)
+            if (!response.ok) throw new Error('Failed to fetch collection images')
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch collection images');
-            }
+            const data = await response.json()
+            console.log('Imagens da API:', data.images)
 
-            const data = await response.json();
-            console.log('Imagens da API:', data.images);
+            const lookbookImages = data.images.filter((img: string) => img !== collection.cover)
 
-            const lookbookImages = data.images.filter((img: string) => img !== collection.cover);
-
-            setCollectionImages(prev => ({
+            setCollectionImages((prev) => ({
                 ...prev,
                 [collection.folderName]: lookbookImages
-            }));
+            }))
 
-            setSelectedCollection(collection);
+            setSelectedCollection(collection)
         } catch (error) {
-            console.error('Error fetching collection images:', error);
-            alert('Erro ao carregar imagens da coleção');
+            console.error('Error fetching collection images:', error)
+            alert('Erro ao carregar imagens da coleção')
         } finally {
-            setLoading(null);
+            setLoading(null)
         }
-    };
+    }
 
     const handleCloseModal = () => {
-        setSelectedCollection(null);
-    };
+        setSelectedCollection(null)
+    }
 
     return (
         <>
@@ -145,10 +143,11 @@ export default function LookBook() {
                                     imageName={collection.cover}
                                     alt={`Capa da coleção ${collection.displayName}`}
                                     className="relative z-10"
-                                    priority={true} // Carregamento prioritário para a capa
+                                    priority={true}
                                 />
 
-                                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 z-20" />
+                                {/* overlay suave */}
+                                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 z-20 pointer-events-none" />
 
                                 {loading === collection.folderName && (
                                     <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30">
@@ -191,13 +190,16 @@ export default function LookBook() {
                         <div className="p-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 overflow-y-auto max-h-[70vh]">
                                 {collectionImages[selectedCollection.folderName]?.map((imageName, index) => (
-                                    <div key={imageName} className="rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+                                    <div
+                                        key={imageName}
+                                        className="rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
+                                    >
                                         <SmartImage
                                             collectionName={selectedCollection.folderName}
                                             imageName={imageName}
                                             alt={`${selectedCollection.displayName} - ${index + 1}`}
                                             className="w-full h-auto"
-                                            priority={true} // Prioritário também no modal
+                                            priority={true}
                                         />
                                     </div>
                                 ))}
@@ -207,5 +209,5 @@ export default function LookBook() {
                 </div>
             )}
         </>
-    );
+    )
 }
