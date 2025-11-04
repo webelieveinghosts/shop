@@ -9,12 +9,12 @@ export const Product = ({ newer, id, name, price, images }: { newer: boolean, id
     const secondImage = hasSecondImage
         ? `https://lhlpxtxqdlctohptywpi.supabase.co/storage/v1/object/public/products/${id}/${images[1]}?quality=50`
         : null
-
+    
     return (
         <div
             className="relative w-full"
-            onMouseEnter={() => hasSecondImage && setHovered(true)}
-            onMouseLeave={() => hasSecondImage && setHovered(false)}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
         >
             {newer && (
                 <div className="absolute top-2.5 left-2.5 uppercase z-40">
@@ -31,10 +31,9 @@ export const Product = ({ newer, id, name, price, images }: { newer: boolean, id
                     }`}
                 style={{ aspectRatio: "1/1" }}
             >
-                {/* imagem principal */}
                 <img
                     src={firstImage}
-                    className={`absolute inset-0 object-cover w-full h-full transition-all duration-500 ease-in-out ${hasSecondImage && hovered ? "opacity-0 scale-105" : "opacity-100 scale-100"
+                    className={`absolute inset-0 object-cover w-full h-full transition-all duration-500 ease-in-out ${hasSecondImage && hovered ? "opacity-0 scale-105" : "opacity-100 scale-105"
                         }`}
                     alt={name}
                     decoding="async"
@@ -42,7 +41,6 @@ export const Product = ({ newer, id, name, price, images }: { newer: boolean, id
                     fetchPriority="high"
                 />
 
-                {/* imagem secundária (só se existir) */}
                 {hasSecondImage && (
                     <img
                         src={secondImage!}
