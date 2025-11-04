@@ -31,12 +31,14 @@ export default function LookBook() {
         collectionName,
         imageName,
         alt,
-        className = ""
+        className = "",
+        priority = false
     }: {
         collectionName: string;
         imageName: string;
         alt: string;
         className?: string;
+        priority?: boolean;
     }) => {
         const extensions: string[] = ['webp', 'jpg', 'jpeg', 'png', 'avif'];
 
@@ -54,7 +56,8 @@ export default function LookBook() {
                         src={`/image/lookbook/${collectionName}/${imageName}.webp`}
                         alt={alt}
                         className={`w-full h-full object-cover block ${className}`}
-                        loading="lazy"
+                        loading={priority ? "eager" : "lazy"} // eager para carregamento imediato
+                        decoding="async"
                         onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             const currentSrc = target.src;
@@ -77,7 +80,10 @@ export default function LookBook() {
                         onLoad={(e) => {
                             console.log('✅ Imagem carregada:', e.currentTarget.src);
                             console.log('Dimensões:', e.currentTarget.naturalWidth, 'x', e.currentTarget.naturalHeight);
+                            // Força o display após carregar
+                            e.currentTarget.style.opacity = '1';
                         }}
+                        style={{ opacity: 0, transition: 'opacity 0.3s ease-in-out' }}
                     />
                 </picture>
             </div>
@@ -134,16 +140,12 @@ export default function LookBook() {
                             onClick={() => fetchCollectionImages(collection)}
                         >
                             <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
-                                {/* Debug: Mostrar se a imagem está carregando */}
-                                <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">
-                                    Carregando capa...
-                                </div>
-
                                 <SmartImage
                                     collectionName={collection.folderName}
                                     imageName={collection.cover}
                                     alt={`Capa da coleção ${collection.displayName}`}
                                     className="relative z-10"
+                                    priority={true} // Carregamento prioritário para a capa
                                 />
 
                                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 z-20" />
@@ -195,6 +197,7 @@ export default function LookBook() {
                                             imageName={imageName}
                                             alt={`${selectedCollection.displayName} - ${index + 1}`}
                                             className="w-full h-auto"
+                                            priority={true} // Prioritário também no modal
                                         />
                                     </div>
                                 ))}
