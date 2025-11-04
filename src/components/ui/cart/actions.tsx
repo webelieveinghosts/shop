@@ -12,7 +12,6 @@ export const addItem = async (prevState: any, { productId, size }: { productId: 
         const id = await addToCart(productId, cartId, size)
         await cookies().then(cookies => cookies.set("cartId", id!.toString()))
     } catch (e) {
-
     }
 }
 
