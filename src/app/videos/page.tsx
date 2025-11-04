@@ -25,9 +25,7 @@ export default async function VideosPage() {
     return (
         <div className="w-full min-h-screen bg-white text-black px-4 pt-10 pb-20">
             <div className="max-w-6xl mx-auto">
-                <h1 className="text-3xl font-semibold mb-10 text-center uppercase tracking-wide">
-                    Vídeos
-                </h1>
+
 
                 <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                     {YOUTUBE_LINKS.map((link, i) => {
