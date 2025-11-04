@@ -24,7 +24,6 @@ const SubmitButton = () => {
                     "cursor-not-allowed px-0": pending
                 }
             )}>
-            {/*<LoadingDots className="bg-white" />*/}
             {pending ? (
                 <div />
             ) : (
