@@ -1,36 +1,20 @@
-"use client"
-import { useState } from "react"
 import "@/styles/product.css"
+import { useState } from "react"
 
-export const Product = ({
-    newer,
-    id,
-    name,
-    price,
-    images
-}: {
-    newer: boolean
-    id: number
-    name: string
-    price: number
-    images: string[]
-}) => {
-    const [currentImage, setCurrentImage] = useState(0)
+export const Product = ({ newer, id, name, price, images }: { newer: boolean, id: number, name: string, price: number, images: string[] }) => {
+    const [hovered, setHovered] = useState(false)
+    const hasSecondImage = images.length > 1
 
-    const handleMouseEnter = () => {
-        if (images.length > 1) {
-            setCurrentImage(1)
-        }
-    }
-
-    const handleMouseLeave = () => {
-        if (images.length > 1) {
-            setCurrentImage(0)
-        }
-    }
+    const imageSrc = hovered && hasSecondImage
+        ? `https://lhlpxtxqdlctohptywpi.supabase.co/storage/v1/object/public/products/${id}/${images[1]}?quality=50`
+        : `https://lhlpxtxqdlctohptywpi.supabase.co/storage/v1/object/public/products/${id}/${images[0]}?quality=50`
 
     return (
-        <div className="relative w-full">
+        <div
+            className="relative w-full"
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+        >
             {newer && (
                 <div className="absolute top-2.5 left-2.5 uppercase z-40">
                     <div className="flex gap-1.5">
@@ -44,30 +28,21 @@ export const Product = ({
             <div
                 className="flex items-center justify-center relative overflow-hidden rounded-md border-2 border-transparent transition-all duration-300 hover:border-primary hover:shadow-md"
                 style={{ aspectRatio: "1/1" }}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
             >
-                <div className="relative max-w-full w-full h-full">
-                    <img
-                        decoding="async"
-                        loading="lazy"
-                        fetchPriority="high"
-                        src={`https://lhlpxtxqdlctohptywpi.supabase.co/storage/v1/object/public/products/${id}/${images[currentImage]}?quality=50`}
-                        className="max-w-full object-cover w-full h-full pointer-events-none select-none transition-opacity duration-500"
-                    />
-                </div>
+                <img
+                    decoding="async"
+                    loading="lazy"
+                    fetchPriority="high"
+                    src={imageSrc}
+                    className="absolute inset-0 object-cover w-full h-full pointer-events-none select-none transition-opacity duration-300"
+                />
             </div>
 
             <div style={{ paddingBlockStart: "0.7rem" }}>
-                <a
-                    href={`/product?id=${id}`}
-                    className="block absolute w-full h-full z-30 left-0 top-0 no-underline"
-                ></a>
+                <a href={`/product?id=${id}`} className="block absolute w-full h-full z-30 left-0 top-0 no-underline"></a>
                 <h3 className="text-xs md:text-xs font-semibold">{name}</h3>
                 <div>
-                    <span className="text-md md:text-base font-bold">
-                        R$ {price.toLocaleString("pt-br")}
-                    </span>
+                    <span className="text-md md:text-base font-bold">R$ {price.toLocaleString("pt-br")}</span>
                 </div>
             </div>
         </div>
