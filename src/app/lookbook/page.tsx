@@ -41,43 +41,46 @@ export default function LookBook() {
         const extensions: string[] = ['webp', 'jpg', 'jpeg', 'png', 'avif'];
 
         return (
-            <picture>
-                {extensions.map((ext) => (
-                    <source
-                        key={ext}
-                        srcSet={`/image/lookbook/${collectionName}/${imageName}.${ext}`}
-                        type={`image/${ext === 'jpg' ? 'jpeg' : ext}`}
+            <div className="w-full h-full">
+                <picture className="w-full h-full block">
+                    {extensions.map((ext) => (
+                        <source
+                            key={ext}
+                            srcSet={`/image/lookbook/${collectionName}/${imageName}.${ext}`}
+                            type={`image/${ext === 'jpg' ? 'jpeg' : ext}`}
+                        />
+                    ))}
+                    <img
+                        src={`/image/lookbook/${collectionName}/${imageName}.webp`}
+                        alt={alt}
+                        className={`w-full h-full object-cover block ${className}`}
+                        loading="lazy"
+                        onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            const currentSrc = target.src;
+                            const url = new URL(currentSrc);
+                            const currentFilename = url.pathname.split('/').pop() || '';
+                            const currentExt = currentFilename.split('.').pop() || '';
+
+                            const currentIndex = extensions.indexOf(currentExt);
+                            console.log(`Extensão ${currentExt} falhou, tentando próxima...`);
+
+                            if (currentIndex < extensions.length - 1) {
+                                const nextExt = extensions[currentIndex + 1];
+                                const newSrc = `/image/lookbook/${collectionName}/${imageName}.${nextExt}`;
+                                target.src = newSrc;
+                                console.log('Tentando:', newSrc);
+                            } else {
+                                console.log('Todas as extensões falharam para:', imageName);
+                            }
+                        }}
+                        onLoad={(e) => {
+                            console.log('✅ Imagem carregada:', e.currentTarget.src);
+                            console.log('Dimensões:', e.currentTarget.naturalWidth, 'x', e.currentTarget.naturalHeight);
+                        }}
                     />
-                ))}
-                <img
-                    src={`/image/lookbook/${collectionName}/${imageName}.webp`}
-                    alt={alt}
-                    className={className}
-                    loading="lazy"
-                    onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        const currentSrc = target.src;
-                        const url = new URL(currentSrc);
-                        const currentFilename = url.pathname.split('/').pop() || '';
-                        const currentExt = currentFilename.split('.').pop() || '';
-
-                        const currentIndex = extensions.indexOf(currentExt);
-                        console.log(`Extensão ${currentExt} falhou, tentando próxima...`);
-
-                        if (currentIndex < extensions.length - 1) {
-                            const nextExt = extensions[currentIndex + 1];
-                            const newSrc = `/image/lookbook/${collectionName}/${imageName}.${nextExt}`;
-                            target.src = newSrc;
-                            console.log('Tentando:', newSrc);
-                        } else {
-                            console.log('Todas as extensões falharam para:', imageName);
-                        }
-                    }}
-                    onLoad={(e) => {
-                        console.log('✅ Imagem carregada:', e.currentTarget.src);
-                    }}
-                />
-            </picture>
+                </picture>
+            </div>
         );
     };
 
@@ -130,19 +133,24 @@ export default function LookBook() {
                             className="group cursor-pointer bg-white rounded-lg shadow-md overflow-hidden transition-all hover:shadow-xl hover:scale-105"
                             onClick={() => fetchCollectionImages(collection)}
                         >
-                            <div className="relative aspect-[3/4] overflow-hidden">
+                            <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
+                                {/* Debug: Mostrar se a imagem está carregando */}
+                                <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">
+                                    Carregando capa...
+                                </div>
+
                                 <SmartImage
                                     collectionName={collection.folderName}
                                     imageName={collection.cover}
                                     alt={`Capa da coleção ${collection.displayName}`}
-                                    className="w-full h-full object-cover"
+                                    className="relative z-10"
                                 />
 
-                                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300" />
+                                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 z-20" />
 
                                 {loading === collection.folderName && (
-                                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                                        <div className="text-white">Carregando...</div>
+                                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30">
+                                        <div className="text-white">Carregando coleção...</div>
                                     </div>
                                 )}
                             </div>
@@ -157,7 +165,6 @@ export default function LookBook() {
                 </div>
             </main>
 
-            {/* Modal com fundo mais claro e desfoque */}
             {selectedCollection && (
                 <div
                     className="fixed inset-0 bg-white bg-opacity-70 backdrop-blur-md z-50 flex items-center justify-center p-4"
@@ -167,7 +174,6 @@ export default function LookBook() {
                         className="relative w-full max-w-7xl max-h-full bg-white rounded-xl shadow-2xl border border-gray-200"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        {/* Header do Modal */}
                         <div className="sticky top-0 z-10 flex justify-between items-center p-6 bg-white border-b border-gray-200 rounded-t-xl">
                             <h2 className="text-2xl font-bold text-gray-800">
                                 {selectedCollection.displayName}
@@ -180,7 +186,6 @@ export default function LookBook() {
                             </button>
                         </div>
 
-                        {/* Grid de Imagens no Modal */}
                         <div className="p-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 overflow-y-auto max-h-[70vh]">
                                 {collectionImages[selectedCollection.folderName]?.map((imageName, index) => (
@@ -189,7 +194,7 @@ export default function LookBook() {
                                             collectionName={selectedCollection.folderName}
                                             imageName={imageName}
                                             alt={`${selectedCollection.displayName} - ${index + 1}`}
-                                            className="w-full h-auto object-cover"
+                                            className="w-full h-auto"
                                         />
                                     </div>
                                 ))}
