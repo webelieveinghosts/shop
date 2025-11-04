@@ -8,13 +8,13 @@ export const Product = ({ newer, id, name, price, images }: { newer: boolean, id
     const firstImage = `https://lhlpxtxqdlctohptywpi.supabase.co/storage/v1/object/public/products/${id}/${images[0]}?quality=50`
     const secondImage = hasSecondImage
         ? `https://lhlpxtxqdlctohptywpi.supabase.co/storage/v1/object/public/products/${id}/${images[1]}?quality=50`
-        : firstImage
+        : null
 
     return (
         <div
             className="relative w-full"
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
+            onMouseEnter={() => hasSecondImage && setHovered(true)}
+            onMouseLeave={() => hasSecondImage && setHovered(false)}
         >
             {newer && (
                 <div className="absolute top-2.5 left-2.5 uppercase z-40">
@@ -33,18 +33,20 @@ export const Product = ({ newer, id, name, price, images }: { newer: boolean, id
                 {/* imagem principal */}
                 <img
                     src={firstImage}
-                    className={`absolute inset-0 object-cover w-full h-full transition-opacity duration-500 ease-in-out ${hovered ? "opacity-0" : "opacity-100"}`}
+                    className={`absolute inset-0 object-cover w-full h-full transition-opacity duration-500 ease-in-out ${hasSecondImage && hovered ? "opacity-0" : "opacity-100"
+                        }`}
                     alt={name}
                     decoding="async"
                     loading="lazy"
                     fetchPriority="high"
                 />
 
-                {/* imagem secundária */}
+                {/* imagem secundária (só se existir) */}
                 {hasSecondImage && (
                     <img
-                        src={secondImage}
-                        className={`absolute inset-0 object-cover w-full h-full transition-opacity duration-500 ease-in-out ${hovered ? "opacity-100" : "opacity-0"}`}
+                        src={secondImage!}
+                        className={`absolute inset-0 object-cover w-full h-full transition-opacity duration-500 ease-in-out ${hovered ? "opacity-100" : "opacity-0"
+                            }`}
                         alt={name}
                         decoding="async"
                         loading="lazy"
