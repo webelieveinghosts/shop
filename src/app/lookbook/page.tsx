@@ -142,15 +142,15 @@ export default function LookBook() {
                                     collectionName={collection.folderName}
                                     imageName={collection.cover}
                                     alt={`Capa da coleção ${collection.displayName}`}
-                                    className="relative z-10"
+                                    className="relative z-30" // imagem agora acima do overlay
                                     priority={true}
                                 />
 
-                                {/* overlay suave */}
-                                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 z-20 pointer-events-none" />
+                                {/* overlay ajustado */}
+                                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 z-10 pointer-events-none" />
 
                                 {loading === collection.folderName && (
-                                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30">
+                                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
                                         <div className="text-white">Carregando coleção...</div>
                                     </div>
                                 )}
