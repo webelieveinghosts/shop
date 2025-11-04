@@ -20,7 +20,6 @@ export async function GET(
 
         const lookbookPath = path.join(process.cwd(), 'public', 'image', 'lookbook', folder);
 
-
         if (!fs.existsSync(lookbookPath)) {
             return NextResponse.json(
                 { error: 'Collection not found' },

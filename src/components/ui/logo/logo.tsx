@@ -4,7 +4,7 @@ export const Logo = ({ className }: { className?: string }) => {
     return (
         <div className={`relative ${className}`} style={{ aspectRatio: '5 / 4' }}>
             <Image
-                src="/logo.png"
+                src="./image/logo.png"
                 alt="WBG Logo"
                 fill
                 className="object-contain"
