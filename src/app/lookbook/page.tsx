@@ -24,7 +24,8 @@ export default function LookBook() {
             displayName: 'MIDNIGHT RAVER$',
             folderName: 'midnight',
             cover: 'capa'
-        }
+        },
+
     ]
 
     const SmartImage = ({

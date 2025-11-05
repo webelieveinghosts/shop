@@ -29,5 +29,5 @@ export const removeItem = async (prevState: any, productId: number) => {
 
 export const redirectToCheckout = async () => {
     const cartId = await cookies().then(cookies => cookies.get("cartId")?.value)
-    redirect(`https://checkout.webelieveinghosts.com.br/${cartId}`)
+    redirect(`https://checkout.wbg.wtf/${cartId}`)
 }
