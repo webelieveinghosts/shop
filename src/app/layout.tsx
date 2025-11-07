@@ -30,13 +30,11 @@ export default async function RootLayout({
                 <GoogleAnalytics />
             </head>
             <body className={`w-full h-screen ${inter.className} antialiased`}>
-                <PasswordGate>
-                    <CartProvider data={cart}>
-                        <LayoutWrapper>
-                            {children}
-                        </LayoutWrapper>
-                    </CartProvider>
-                </PasswordGate>
+                <CartProvider data={cart}>
+                    <LayoutWrapper>
+                        {children}
+                    </LayoutWrapper>
+                </CartProvider>
             </body>
         </html>
     )
