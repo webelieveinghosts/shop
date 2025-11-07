@@ -201,6 +201,7 @@ export const LatestCollection = () => {
                                             id={product.id}
                                             name={product.name}
                                             price={product.price}
+                                            oldprice={product.oldprice}
                                             images={product.images}
                                         />
                                     </div>
