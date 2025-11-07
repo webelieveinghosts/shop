@@ -20,8 +20,8 @@ export default function LookBook() {
 
     const collections: Collection[] = [
         {
-            name: 'MIDNIGHT RAVER$',
-            displayName: 'MIDNIGHT RAVER$',
+            name: 'NONVIOLENT COMMUNICATION',
+            displayName: 'NONVIOLENT COMMUNICATION',
             folderName: 'midnight',
             cover: 'capa'
         },
