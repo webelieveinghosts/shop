@@ -171,7 +171,7 @@ export const LatestCollection = () => {
                 <div className="flex flex-col items-center justify-center mb-12">
                     <div className="w-20 h-0.5 bg-gray-300 mb-4"></div>
                     <h3 className="font-bold uppercase text-2xl md:text-3xl tracking-wider text-center">
-                        LATEST COLLECTION
+                        MIDNIGHT RAVER$
                     </h3>
                     <p className="text-gray-600 mt-3 text-center max-w-2xl">
                         Descubra as peças mais recentes da nossa coleção exclusiva
