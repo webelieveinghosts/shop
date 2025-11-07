@@ -3,7 +3,6 @@ import { Inter } from "next/font/google"
 import { cookies } from "next/headers"
 
 import { CartProvider } from "@/components/provider/cart-provider"
-import { PasswordGate } from "@/components/auth/password-gate"
 import { GoogleAnalytics } from "@/components/analytics/google-analytics"
 import { getCart } from "@/supabase/queries"
 import { createClient } from "@/supabase/server"
@@ -31,13 +30,11 @@ export default async function RootLayout({
                 <GoogleAnalytics />
             </head>
             <body className={`w-full h-screen ${inter.className} antialiased`}>
-                <PasswordGate>
-                    <CartProvider data={cart}>
-                        <LayoutWrapper>
-                            {children}
-                        </LayoutWrapper>
-                    </CartProvider>
-                </PasswordGate>
+                <CartProvider data={cart}>
+                    <LayoutWrapper>
+                        {children}
+                    </LayoutWrapper>
+                </CartProvider>
             </body>
         </html>
     )
