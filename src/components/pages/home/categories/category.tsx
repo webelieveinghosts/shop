@@ -84,6 +84,7 @@ export const Category = ({ category }: CategoryProps) => {
                         id={product.id}
                         name={product.name}
                         price={product.price}
+                        oldprice={product.oldprice}
                         images={product.images}
                     />
                 ))}

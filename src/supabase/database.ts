@@ -82,6 +82,7 @@ export type Database = {
                     images: string[]
                     name: string
                     price: number
+                    oldprice?: number
                     sales: number
                     sizes: Database["public"]["Enums"]["size"][]
                     sizes_view: string | null
@@ -95,6 +96,7 @@ export type Database = {
                     images?: string[]
                     name: string
                     price?: number
+                    oldprice?: number
                     sales?: number
                     sizes?: Database["public"]["Enums"]["size"][]
                     sizes_view?: string | null
