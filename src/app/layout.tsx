@@ -3,7 +3,6 @@ import { Inter } from "next/font/google"
 import { cookies } from "next/headers"
 
 import { CartProvider } from "@/components/provider/cart-provider"
-import { PasswordGate } from "@/components/auth/password-gate"
 import { GoogleAnalytics } from "@/components/analytics/google-analytics"
 import { getCart } from "@/supabase/queries"
 import { createClient } from "@/supabase/server"
