@@ -1,7 +1,16 @@
 import "@/styles/product.css"
 import { useState } from "react"
 
-export const Product = ({ newer, id, name, price, images }: { newer: boolean, id: number, name: string, price: number, images: string[] }) => {
+interface ProductProps {
+    newer: boolean
+    id: number
+    name: string
+    price: number
+    oldprice?: number
+    images: string[]
+}
+
+export const Product = ({ newer, id, name, price, oldprice, images }: ProductProps) => {
     const [hovered, setHovered] = useState(false)
     const hasSecondImage = images.length > 1
 
@@ -9,7 +18,7 @@ export const Product = ({ newer, id, name, price, images }: { newer: boolean, id
     const secondImage = hasSecondImage
         ? `https://lhlpxtxqdlctohptywpi.supabase.co/storage/v1/object/public/products/${id}/${images[1]}?quality=50`
         : null
-    
+
     return (
         <div
             className="relative w-full"
@@ -57,8 +66,16 @@ export const Product = ({ newer, id, name, price, images }: { newer: boolean, id
             <div style={{ paddingBlockStart: "0.7rem" }}>
                 <a href={`/product?id=${id}`} className="block absolute w-full h-full z-30 left-0 top-0 no-underline"></a>
                 <h3 className="text-xs md:text-xs font-semibold">{name}</h3>
-                <div>
-                    <span className="text-md md:text-base font-bold">R$ {price.toLocaleString("pt-br")}</span>
+
+                <div className="flex items-center gap-2">
+                    {oldprice && (
+                        <span className="text-sm text-gray-500 line-through">
+                            R$ {oldprice.toLocaleString("pt-br")}
+                        </span>
+                    )}
+                    <span className="text-md md:text-base font-bold">
+                        R$ {price.toLocaleString("pt-br")}
+                    </span>
                 </div>
             </div>
         </div>
